@@ -12,7 +12,7 @@ export class UserOperationMiddlewareCtx implements IUserOperationMiddlewareCtx {
     this.chainId = ethers.BigNumber.from(chainId);
   }
 
-  async getUserOpHash() {
+  getUserOpHash() {
     let packed = ethers.utils.defaultAbiCoder.encode(
       [
         {

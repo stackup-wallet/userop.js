@@ -73,5 +73,5 @@ export interface IUserOperationMiddlewareCtx {
   chainId: BigNumberish;
 
   // A userOpHash is a unique hash of op + entryPoint + chainId.
-  getUserOpHash: () => Promise<string>;
+  getUserOpHash: () => string;
 }
