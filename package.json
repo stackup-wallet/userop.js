@@ -1,5 +1,5 @@
 {
-  "name": "userop",
+  "name": "@stackup-wallet/userop",
   "version": "0.0.1",
   "description": "A simple JS library for building ERC-4337 UserOperations.",
   "types": "./dist/index.d.ts",
