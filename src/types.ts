@@ -1,4 +1,5 @@
 import { BigNumberish, BytesLike } from "ethers";
+import { UserOperationEventEvent } from "./typechain/EntryPoint";
 
 export interface IUserOperation {
   sender: string;
@@ -74,4 +75,24 @@ export interface IUserOperationMiddlewareCtx {
 
   // A userOpHash is a unique hash of op + entryPoint + chainId.
   getUserOpHash: () => string;
+}
+
+export interface IClient {
+  sendUserOperation: (
+    builder: IUserOperationBuilder,
+    opts?: ISendUserOperationOpts
+  ) => Promise<ISendUserOperationResponse>;
+
+  buildUserOperation: (
+    builder: IUserOperationBuilder
+  ) => Promise<IUserOperation>;
+}
+
+export interface ISendUserOperationOpts {
+  onBuild?: (op: IUserOperation) => Promise<any> | any;
+}
+
+export interface ISendUserOperationResponse {
+  userOpHash: string;
+  wait: () => Promise<UserOperationEventEvent | null>;
 }
