@@ -20,7 +20,6 @@ export class SimpleAccount extends UserOperationBuilder {
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
   private factory: SimpleAccountFactory;
-  private chainId: BigNumberish;
   private initCode: string;
   proxy: SimpleAccountImpl;
 
@@ -38,7 +37,6 @@ export class SimpleAccount extends UserOperationBuilder {
       factory,
       this.provider
     );
-    this.chainId = ethers.BigNumber.from(1);
     this.initCode = "0x";
     this.proxy = SimpleAccount__factory.connect(
       ethers.constants.AddressZero,
@@ -81,9 +79,6 @@ export class SimpleAccount extends UserOperationBuilder {
       const addr = error?.errorArgs?.sender;
       if (!addr) throw error;
 
-      instance.chainId = await instance.provider
-        .getNetwork()
-        .then((network) => ethers.BigNumber.from(network.chainId));
       instance.proxy = SimpleAccount__factory.connect(addr, instance.provider);
     }
 
