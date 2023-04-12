@@ -36,7 +36,10 @@ export class UserOperationBuilder implements IUserOperationBuilder {
 
   private resolveFields(op: Partial<IUserOperation>): Partial<IUserOperation> {
     const obj = {
-      sender: op.sender && ethers.utils.getAddress(op.sender),
+      sender:
+        op.sender !== undefined
+          ? ethers.utils.getAddress(op.sender)
+          : undefined,
       nonce:
         op.nonce !== undefined ? ethers.BigNumber.from(op.nonce) : undefined,
       initCode:
