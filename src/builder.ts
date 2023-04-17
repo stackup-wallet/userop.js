@@ -1,4 +1,5 @@
 import { BigNumberish, BytesLike, ethers } from "ethers";
+import { OpToJSON } from "./utils";
 import { UserOperationMiddlewareCtx } from "./context";
 import {
   IUserOperation,
@@ -6,14 +7,18 @@ import {
   UserOperationMiddlewareFn,
 } from "./types";
 
+export const DEFAULT_VERIFICATION_GAS_LIMIT = ethers.BigNumber.from(70000);
+export const DEFAULT_CALL_GAS_LIMIT = ethers.BigNumber.from(35000);
+export const DEFAULT_PRE_VERIFICATION_GAS = ethers.BigNumber.from(21000);
+
 export const DEFAULT_USER_OP: IUserOperation = {
   sender: ethers.constants.AddressZero,
   nonce: ethers.constants.Zero,
   initCode: ethers.utils.hexlify("0x"),
   callData: ethers.utils.hexlify("0x"),
-  callGasLimit: ethers.constants.Zero,
-  verificationGasLimit: ethers.constants.Zero,
-  preVerificationGas: ethers.constants.Zero,
+  callGasLimit: DEFAULT_CALL_GAS_LIMIT,
+  verificationGasLimit: DEFAULT_VERIFICATION_GAS_LIMIT,
+  preVerificationGas: DEFAULT_PRE_VERIFICATION_GAS,
   maxFeePerGas: ethers.constants.Zero,
   maxPriorityFeePerGas: ethers.constants.Zero,
   paymasterAndData: ethers.utils.hexlify("0x"),
@@ -32,7 +37,7 @@ export class UserOperationBuilder implements IUserOperationBuilder {
   }
 
   private resolveFields(op: Partial<IUserOperation>): Partial<IUserOperation> {
-    return {
+    const obj = {
       sender:
         op.sender !== undefined
           ? ethers.utils.getAddress(op.sender)
@@ -76,6 +81,13 @@ export class UserOperationBuilder implements IUserOperationBuilder {
           ? ethers.utils.hexlify(op.signature)
           : undefined,
     };
+    return Object.keys(obj).reduce(
+      (prev, curr) =>
+        (obj as any)[curr] !== undefined
+          ? { ...prev, [curr]: (obj as any)[curr] }
+          : prev,
+      {}
+    );
   }
 
   getSender() {
@@ -165,7 +177,10 @@ export class UserOperationBuilder implements IUserOperationBuilder {
   }
 
   useDefaults(partialOp: Partial<IUserOperation>) {
-    this.defaultOp = { ...this.defaultOp, ...this.resolveFields(partialOp) };
+    const resolvedOp = this.resolveFields(partialOp);
+    this.defaultOp = { ...this.defaultOp, ...resolvedOp };
+    this.currOp = { ...this.currOp, ...resolvedOp };
+
     return this;
   }
   resetDefaults() {
@@ -194,7 +209,7 @@ export class UserOperationBuilder implements IUserOperationBuilder {
     }
     this.setPartial(ctx.op);
 
-    return this.currOp;
+    return OpToJSON(this.currOp);
   }
 
   resetOp() {

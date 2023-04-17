@@ -1,6 +1,6 @@
 {
   "name": "userop",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A simple JS library for building ERC-4337 UserOperations.",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
@@ -12,7 +12,8 @@
   },
   "scripts": {
     "clean": "rimraf dist",
-    "build": "yarn clean && tsc",
+    "gen:types": "typechain --target=ethers-v5 --out-dir=src/typechain 'abi/*.json'",
+    "build": "yarn clean && yarn gen:types && tsc",
     "test": "jest",
     "lint": "eslint . --ignore-path .eslintignore && tsc --noEmit",
     "lint:fix": "eslint . --ignore-path .eslintignore --fix",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",
+    "@typechain/ethers-v5": "^10.2.0",
     "@types/jest": "^29.5.0",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
     "@typescript-eslint/parser": "^5.57.1",
@@ -31,6 +33,7 @@
     "prettier": "^2.8.7",
     "rimraf": "^4.4.1",
     "ts-jest": "^29.1.0",
+    "typechain": "^8.1.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {

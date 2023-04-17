@@ -2,9 +2,13 @@ import { ethers } from "ethers";
 import { faker } from "@faker-js/faker";
 import {
   UserOperationBuilder,
+  DEFAULT_CALL_GAS_LIMIT,
+  DEFAULT_VERIFICATION_GAS_LIMIT,
+  DEFAULT_PRE_VERIFICATION_GAS,
   DEFAULT_USER_OP,
   UserOperationMiddlewareFn,
 } from "../src";
+import { OpToJSON } from "../src/utils";
 
 const MOCK_BYTES_1 = "0xdead";
 const MOCK_BYTES_2 = "0xbeef";
@@ -147,7 +151,7 @@ describe("UserOperationBuilder", () => {
       test("Updates via setter with good values", () => {
         const mockValue = "0x1";
 
-        expect(builder.getCallGasLimit()).toStrictEqual(ethers.constants.Zero);
+        expect(builder.getCallGasLimit()).toStrictEqual(DEFAULT_CALL_GAS_LIMIT);
         expect(
           builder.setCallGasLimit(mockValue).getCallGasLimit()
         ).toStrictEqual(ethers.BigNumber.from(mockValue));
@@ -181,7 +185,7 @@ describe("UserOperationBuilder", () => {
         const mockValue = "0x1";
 
         expect(builder.getVerificationGasLimit()).toStrictEqual(
-          ethers.constants.Zero
+          DEFAULT_VERIFICATION_GAS_LIMIT
         );
         expect(
           builder.setVerificationGasLimit(mockValue).getVerificationGasLimit()
@@ -220,7 +224,7 @@ describe("UserOperationBuilder", () => {
         const mockValue = "0x1";
 
         expect(builder.getPreVerificationGas()).toStrictEqual(
-          ethers.constants.Zero
+          DEFAULT_PRE_VERIFICATION_GAS
         );
         expect(
           builder.setPreVerificationGas(mockValue).getPreVerificationGas()
@@ -429,12 +433,14 @@ describe("UserOperationBuilder", () => {
 
       expect(
         await builder.buildOp(faker.finance.ethereumAddress(), "0x1")
-      ).toStrictEqual({
-        ...DEFAULT_USER_OP,
-        paymasterAndData: MOCK_BYTES_1,
-        maxFeePerGas: ethers.BigNumber.from(mockMaxFeePerGas),
-        maxPriorityFeePerGas: ethers.BigNumber.from(mockMaxPriorityFeePerGas),
-      });
+      ).toStrictEqual(
+        OpToJSON({
+          ...DEFAULT_USER_OP,
+          paymasterAndData: MOCK_BYTES_1,
+          maxFeePerGas: ethers.BigNumber.from(mockMaxFeePerGas),
+          maxPriorityFeePerGas: ethers.BigNumber.from(mockMaxPriorityFeePerGas),
+        })
+      );
     });
 
     test("Should forget middleware on resetMiddleware", async () => {
@@ -445,7 +451,7 @@ describe("UserOperationBuilder", () => {
 
       expect(
         await builder.buildOp(faker.finance.ethereumAddress(), "0x1")
-      ).toStrictEqual({ ...DEFAULT_USER_OP });
+      ).toStrictEqual(OpToJSON({ ...DEFAULT_USER_OP }));
     });
   });
 });
