@@ -13,11 +13,11 @@ const estimateCreationGas = async (
   initCode: BytesLike
 ): Promise<ethers.BigNumber> => {
   const initCodeHex = ethers.utils.hexlify(initCode);
-  const deployerAddress = initCodeHex.substring(0, 42);
-  const deployerCallData = "0x" + initCodeHex.substring(42);
+  const factory = initCodeHex.substring(0, 42);
+  const callData = "0x" + initCodeHex.substring(42);
   return await provider.estimateGas({
-    to: deployerAddress,
-    data: deployerCallData,
+    to: factory,
+    data: callData,
   });
 };
 
