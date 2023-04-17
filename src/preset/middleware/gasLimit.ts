@@ -1,4 +1,4 @@
-import { BigNumberish, ethers } from "ethers";
+import { BigNumberish, BytesLike, ethers } from "ethers";
 import { OpToJSON } from "../../utils";
 import { UserOperationMiddlewareFn } from "../../types";
 
@@ -8,9 +8,28 @@ interface GasEstimate {
   callGasLimit: BigNumberish;
 }
 
+const estimateCreationGas = async (
+  provider: ethers.providers.JsonRpcProvider,
+  initCode: BytesLike
+): Promise<ethers.BigNumber> => {
+  const initCodeHex = ethers.utils.hexlify(initCode);
+  const deployerAddress = initCodeHex.substring(0, 42);
+  const deployerCallData = "0x" + initCodeHex.substring(42);
+  return await provider.estimateGas({
+    to: deployerAddress,
+    data: deployerCallData,
+  });
+};
+
 export const estimateUserOperationGas =
   (provider: ethers.providers.JsonRpcProvider): UserOperationMiddlewareFn =>
   async (ctx) => {
+    if (ethers.BigNumber.from(ctx.op.nonce).isZero()) {
+      ctx.op.verificationGasLimit = ethers.BigNumber.from(
+        ctx.op.verificationGasLimit
+      ).add(await estimateCreationGas(provider, ctx.op.initCode));
+    }
+
     const est = (await provider.send("eth_estimateUserOperationGas", [
       OpToJSON(ctx.op),
       ctx.entryPoint,

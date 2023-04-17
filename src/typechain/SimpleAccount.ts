@@ -75,8 +75,8 @@ export interface SimpleAccountInterface extends utils.Interface {
     "execute(address,uint256,bytes)": FunctionFragment;
     "executeBatch(address[],bytes[])": FunctionFragment;
     "getDeposit()": FunctionFragment;
+    "getNonce()": FunctionFragment;
     "initialize(address)": FunctionFragment;
-    "nonce()": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
@@ -97,8 +97,8 @@ export interface SimpleAccountInterface extends utils.Interface {
       | "execute"
       | "executeBatch"
       | "getDeposit"
+      | "getNonce"
       | "initialize"
-      | "nonce"
       | "onERC1155BatchReceived"
       | "onERC1155Received"
       | "onERC721Received"
@@ -136,11 +136,11 @@ export interface SimpleAccountInterface extends utils.Interface {
     functionFragment: "getDeposit",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "getNonce", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "nonce", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
     values: [
@@ -219,8 +219,8 @@ export interface SimpleAccountInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getDeposit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getNonce", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "nonce", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
     data: BytesLike
@@ -370,12 +370,12 @@ export interface SimpleAccount extends BaseContract {
 
     getDeposit(overrides?: CallOverrides): Promise<[BigNumber]>;
 
+    getNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
+
     initialize(
       anOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
-
-    nonce(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     onERC1155BatchReceived(
       arg0: PromiseOrValue<string>,
@@ -468,12 +468,12 @@ export interface SimpleAccount extends BaseContract {
 
   getDeposit(overrides?: CallOverrides): Promise<BigNumber>;
 
+  getNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
   initialize(
     anOwner: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
-
-  nonce(overrides?: CallOverrides): Promise<BigNumber>;
 
   onERC1155BatchReceived(
     arg0: PromiseOrValue<string>,
@@ -564,12 +564,12 @@ export interface SimpleAccount extends BaseContract {
 
     getDeposit(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
     initialize(
       anOwner: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    nonce(overrides?: CallOverrides): Promise<BigNumber>;
 
     onERC1155BatchReceived(
       arg0: PromiseOrValue<string>,
@@ -700,12 +700,12 @@ export interface SimpleAccount extends BaseContract {
 
     getDeposit(overrides?: CallOverrides): Promise<BigNumber>;
 
+    getNonce(overrides?: CallOverrides): Promise<BigNumber>;
+
     initialize(
       anOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
-
-    nonce(overrides?: CallOverrides): Promise<BigNumber>;
 
     onERC1155BatchReceived(
       arg0: PromiseOrValue<string>,
@@ -799,12 +799,12 @@ export interface SimpleAccount extends BaseContract {
 
     getDeposit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
+    getNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
     initialize(
       anOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
-
-    nonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(
       arg0: PromiseOrValue<string>,

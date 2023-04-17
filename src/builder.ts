@@ -7,16 +7,18 @@ import {
   UserOperationMiddlewareFn,
 } from "./types";
 
-export const DEFAULT_GAS_LIMIT = ethers.BigNumber.from(1500000);
+export const DEFAULT_VERIFICATION_GAS_LIMIT = ethers.BigNumber.from(70000);
+export const DEFAULT_CALL_GAS_LIMIT = ethers.BigNumber.from(35000);
+export const DEFAULT_PRE_VERIFICATION_GAS = ethers.BigNumber.from(21000);
 
 export const DEFAULT_USER_OP: IUserOperation = {
   sender: ethers.constants.AddressZero,
   nonce: ethers.constants.Zero,
   initCode: ethers.utils.hexlify("0x"),
   callData: ethers.utils.hexlify("0x"),
-  callGasLimit: DEFAULT_GAS_LIMIT,
-  verificationGasLimit: DEFAULT_GAS_LIMIT,
-  preVerificationGas: ethers.constants.Zero,
+  callGasLimit: DEFAULT_CALL_GAS_LIMIT,
+  verificationGasLimit: DEFAULT_VERIFICATION_GAS_LIMIT,
+  preVerificationGas: DEFAULT_PRE_VERIFICATION_GAS,
   maxFeePerGas: ethers.constants.Zero,
   maxPriorityFeePerGas: ethers.constants.Zero,
   paymasterAndData: ethers.utils.hexlify("0x"),

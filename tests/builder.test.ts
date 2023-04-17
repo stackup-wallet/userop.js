@@ -2,7 +2,9 @@ import { ethers } from "ethers";
 import { faker } from "@faker-js/faker";
 import {
   UserOperationBuilder,
-  DEFAULT_GAS_LIMIT,
+  DEFAULT_CALL_GAS_LIMIT,
+  DEFAULT_VERIFICATION_GAS_LIMIT,
+  DEFAULT_PRE_VERIFICATION_GAS,
   DEFAULT_USER_OP,
   UserOperationMiddlewareFn,
 } from "../src";
@@ -149,7 +151,7 @@ describe("UserOperationBuilder", () => {
       test("Updates via setter with good values", () => {
         const mockValue = "0x1";
 
-        expect(builder.getCallGasLimit()).toStrictEqual(DEFAULT_GAS_LIMIT);
+        expect(builder.getCallGasLimit()).toStrictEqual(DEFAULT_CALL_GAS_LIMIT);
         expect(
           builder.setCallGasLimit(mockValue).getCallGasLimit()
         ).toStrictEqual(ethers.BigNumber.from(mockValue));
@@ -183,7 +185,7 @@ describe("UserOperationBuilder", () => {
         const mockValue = "0x1";
 
         expect(builder.getVerificationGasLimit()).toStrictEqual(
-          DEFAULT_GAS_LIMIT
+          DEFAULT_VERIFICATION_GAS_LIMIT
         );
         expect(
           builder.setVerificationGasLimit(mockValue).getVerificationGasLimit()
@@ -222,7 +224,7 @@ describe("UserOperationBuilder", () => {
         const mockValue = "0x1";
 
         expect(builder.getPreVerificationGas()).toStrictEqual(
-          ethers.constants.Zero
+          DEFAULT_PRE_VERIFICATION_GAS
         );
         expect(
           builder.setPreVerificationGas(mockValue).getPreVerificationGas()

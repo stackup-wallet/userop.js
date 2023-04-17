@@ -13,67 +13,33 @@ export class UserOperationMiddlewareCtx implements IUserOperationMiddlewareCtx {
   }
 
   getUserOpHash() {
-    let packed = ethers.utils.defaultAbiCoder.encode(
+    const packed = ethers.utils.defaultAbiCoder.encode(
       [
-        {
-          components: [
-            {
-              type: "address",
-              name: "sender",
-            },
-            {
-              type: "uint256",
-              name: "nonce",
-            },
-            {
-              type: "bytes",
-              name: "initCode",
-            },
-            {
-              type: "bytes",
-              name: "callData",
-            },
-            {
-              type: "uint256",
-              name: "callGasLimit",
-            },
-            {
-              type: "uint256",
-              name: "verificationGasLimit",
-            },
-            {
-              type: "uint256",
-              name: "preVerificationGas",
-            },
-            {
-              type: "uint256",
-              name: "maxFeePerGas",
-            },
-            {
-              type: "uint256",
-              name: "maxPriorityFeePerGas",
-            },
-            {
-              type: "bytes",
-              name: "paymasterAndData",
-            },
-            {
-              type: "bytes",
-              name: "signature",
-            },
-          ],
-          name: "userOp",
-          type: "tuple",
-        } as any,
+        "address",
+        "uint256",
+        "bytes32",
+        "bytes32",
+        "uint256",
+        "uint256",
+        "uint256",
+        "uint256",
+        "uint256",
+        "bytes32",
       ],
       [
-        {
-          ...this.op,
-          signature: "0x",
-        },
+        this.op.sender,
+        this.op.nonce,
+        ethers.utils.keccak256(this.op.initCode),
+        ethers.utils.keccak256(this.op.callData),
+        this.op.callGasLimit,
+        this.op.verificationGasLimit,
+        this.op.preVerificationGas,
+        this.op.maxFeePerGas,
+        this.op.maxPriorityFeePerGas,
+        ethers.utils.keccak256(this.op.paymasterAndData),
       ]
     );
-    packed = "0x" + packed.slice(66, packed.length - 64);
+
     const enc = ethers.utils.defaultAbiCoder.encode(
       ["bytes32", "address", "uint256"],
       [ethers.utils.keccak256(packed), this.entryPoint, this.chainId]

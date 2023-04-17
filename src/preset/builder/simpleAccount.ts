@@ -45,8 +45,7 @@ export class SimpleAccount extends UserOperationBuilder {
   }
 
   private resolveAccount: UserOperationMiddlewareFn = async (ctx) => {
-    ctx.op.sender = this.proxy.address;
-    ctx.op.nonce = await this.proxy.nonce();
+    ctx.op.nonce = await this.entryPoint.getNonce(ctx.op.sender, 0);
     ctx.op.initCode = ctx.op.nonce.eq(0) ? this.initCode : "0x";
   };
 
@@ -85,7 +84,9 @@ export class SimpleAccount extends UserOperationBuilder {
     const base = instance
       .useDefaults({
         sender: instance.proxy.address,
-        signature: await instance.signer.signMessage("dummy signature"),
+        signature: await instance.signer.signMessage(
+          ethers.utils.arrayify(ethers.utils.keccak256("0xdead"))
+        ),
       })
       .useMiddleware(instance.resolveAccount)
       .useMiddleware(getGasPrice(instance.provider))
