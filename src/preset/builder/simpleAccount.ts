@@ -89,12 +89,11 @@ export class SimpleAccount extends UserOperationBuilder {
         ),
       })
       .useMiddleware(instance.resolveAccount)
-      .useMiddleware(getGasPrice(instance.provider))
-      .useMiddleware(estimateUserOperationGas(instance.provider));
+      .useMiddleware(getGasPrice(instance.provider));
 
     const withPM = paymasterMiddleware
       ? base.useMiddleware(paymasterMiddleware)
-      : base;
+      : base.useMiddleware(estimateUserOperationGas(instance.provider));
 
     return withPM.useMiddleware(EOASignature(instance.signer));
   }
