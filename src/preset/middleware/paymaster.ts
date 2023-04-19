@@ -21,7 +21,6 @@ export const verifyingPaymaster =
     const pm = (await provider.send("pm_sponsorUserOperation", [
       OpToJSON(ctx.op),
       ctx.entryPoint,
-      ethers.utils.hexlify(ctx.chainId),
       context,
     ])) as VerifyingPaymasterResult;
 
