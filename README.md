@@ -6,7 +6,7 @@ A simple JS library for building ERC-4337 UserOperations.
 
 # Usage
 
-See the `userop` documentation at [docs.stackup.sh](https://docs.stackup.sh/docs/packages/userop/introduction).
+See the `userop` documentation at [docs.stackup.sh](https://docs.stackup.sh/reference/useropjs).
 
 # Contributing
 
