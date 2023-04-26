@@ -89,6 +89,7 @@ export interface IClient {
 }
 
 export interface ISendUserOperationOpts {
+  dryRun?: boolean;
   onBuild?: (op: IUserOperation) => Promise<any> | any;
 }
 
