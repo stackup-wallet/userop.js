@@ -4,6 +4,8 @@
 
 A simple JS library for building ERC-4337 UserOperations.
 
+> **🚀 Looking for access to hosted infrastructure to build your Smart Accounts? Check out [stackup.sh](https://www.stackup.sh/)!**
+
 # Usage
 
 See the `userop` documentation at [docs.stackup.sh](https://docs.stackup.sh/docs/useropjs).

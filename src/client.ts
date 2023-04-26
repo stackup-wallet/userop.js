@@ -6,6 +6,7 @@ import {
 } from "./types";
 import { EntryPoint, EntryPoint__factory } from "./typechain";
 import { OpToJSON } from "./utils";
+import { UserOperationMiddlewareCtx } from "./context";
 
 export class Client implements IClient {
   private provider: ethers.providers.JsonRpcProvider;
@@ -41,18 +42,29 @@ export class Client implements IClient {
     builder: IUserOperationBuilder,
     opts?: ISendUserOperationOpts
   ) {
+    const dryRun = Boolean(opts?.dryRun);
     const op = await this.buildUserOperation(builder);
     opts?.onBuild?.(op);
 
-    const userOpHash = (await this.provider.send("eth_sendUserOperation", [
-      OpToJSON(op),
-      this.entryPoint.address,
-    ])) as string;
+    const userOpHash = dryRun
+      ? new UserOperationMiddlewareCtx(
+          op,
+          this.entryPoint.address,
+          this.chainId
+        ).getUserOpHash()
+      : ((await this.provider.send("eth_sendUserOperation", [
+          OpToJSON(op),
+          this.entryPoint.address,
+        ])) as string);
     builder.resetOp();
 
     return {
       userOpHash,
       wait: async () => {
+        if (dryRun) {
+          return null;
+        }
+
         const end = Date.now() + this.waitTimeoutMs;
         const block = await this.provider.getBlock("latest");
         while (Date.now() < end) {
