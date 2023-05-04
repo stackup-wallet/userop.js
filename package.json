@@ -36,7 +36,8 @@
     "typechain": "^8.1.1",
     "typescript": "^5.0.4"
   },
-  "dependencies": {
+  "dependencies": {},
+  "peerDependencies": {
     "ethers": "^5.7.2"
   }
 }
