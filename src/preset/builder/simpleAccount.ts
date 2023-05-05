@@ -16,7 +16,7 @@ import {
 import { UserOperationMiddlewareFn } from "../../types";
 
 export class SimpleAccount extends UserOperationBuilder {
-  private signer: ethers.Wallet;
+  private signer: ethers.Signer;
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
   private factory: SimpleAccountFactory;
@@ -24,13 +24,13 @@ export class SimpleAccount extends UserOperationBuilder {
   proxy: SimpleAccountImpl;
 
   private constructor(
-    signingKey: string,
+    signer: ethers.Signer,
     ERC4337NodeRpc: string,
     entryPoint: string,
     factory: string
   ) {
     super();
-    this.signer = new ethers.Wallet(signingKey);
+    this.signer = signer;
     this.provider = new ethers.providers.JsonRpcProvider(ERC4337NodeRpc);
     this.entryPoint = EntryPoint__factory.connect(entryPoint, this.provider);
     this.factory = SimpleAccountFactory__factory.connect(
@@ -50,14 +50,14 @@ export class SimpleAccount extends UserOperationBuilder {
   };
 
   public static async init(
-    signingKey: string,
+    signer: ethers.Signer,
     ERC4337NodeRpc: string,
     entryPoint: string,
     factory: string,
     paymasterMiddleware?: UserOperationMiddlewareFn
   ): Promise<SimpleAccount> {
     const instance = new SimpleAccount(
-      signingKey,
+      signer,
       ERC4337NodeRpc,
       entryPoint,
       factory
