@@ -4,7 +4,11 @@
 export type { EntryPoint } from "./EntryPoint";
 export type { SimpleAccount } from "./SimpleAccount";
 export type { SimpleAccountFactory } from "./SimpleAccountFactory";
+export type { SmartAccount } from "./SmartAccount";
+export type { SmartAccountFactory } from "./SmartAccountFactory";
 export * as factories from "./factories";
 export { EntryPoint__factory } from "./factories/EntryPoint__factory";
 export { SimpleAccount__factory } from "./factories/SimpleAccount__factory";
 export { SimpleAccountFactory__factory } from "./factories/SimpleAccountFactory__factory";
+export { SmartAccount__factory } from "./factories/SmartAccount__factory";
+export { SmartAccountFactory__factory } from "./factories/SmartAccountFactory__factory";
