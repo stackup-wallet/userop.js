@@ -21,7 +21,7 @@
     "prettier:fix": "prettier --write --ignore-path .eslintignore '**'"
   },
   "devDependencies": {
-    "@faker-js/faker": "^7.6.0",
+    "@faker-js/faker": "^8.0.1",
     "@typechain/ethers-v5": "^10.2.0",
     "@types/jest": "^29.5.0",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
