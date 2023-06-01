@@ -97,3 +97,15 @@ export interface ISendUserOperationResponse {
   userOpHash: string;
   wait: () => Promise<UserOperationEventEvent | null>;
 }
+
+export interface IClientOpts {
+  entryPoint?: string;
+  overrideBundlerRpc?: string;
+}
+
+export interface IBasePresetBuilderOpts {
+  entryPoint?: string;
+  factory?: string;
+  paymasterMiddleware?: UserOperationMiddlewareFn;
+  overrideBundlerRpc?: string;
+}
