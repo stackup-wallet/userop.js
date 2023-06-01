@@ -15,7 +15,7 @@ import {
   SimpleAccount as SimpleAccountImpl,
   SimpleAccount__factory,
 } from "../../typechain";
-import { IBasePresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
+import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
 
 export class SimpleAccount extends UserOperationBuilder {
   private signer: ethers.Signer;
@@ -28,7 +28,7 @@ export class SimpleAccount extends UserOperationBuilder {
   private constructor(
     signer: ethers.Signer,
     rpcUrl: string,
-    opts?: IBasePresetBuilderOpts
+    opts?: IPresetBuilderOpts
   ) {
     super();
     this.signer = signer;
@@ -58,7 +58,7 @@ export class SimpleAccount extends UserOperationBuilder {
   public static async init(
     signer: ethers.Signer,
     rpcUrl: string,
-    opts?: IBasePresetBuilderOpts
+    opts?: IPresetBuilderOpts
   ): Promise<SimpleAccount> {
     const instance = new SimpleAccount(signer, rpcUrl, opts);
 

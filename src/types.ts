@@ -103,7 +103,7 @@ export interface ISendUserOperationResponse {
   wait: () => Promise<UserOperationEventEvent | null>;
 }
 
-export interface IBasePresetBuilderOpts {
+export interface IPresetBuilderOpts {
   entryPoint?: string;
   factory?: string;
   paymasterMiddleware?: UserOperationMiddlewareFn;

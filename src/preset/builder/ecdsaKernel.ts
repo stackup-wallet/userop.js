@@ -15,7 +15,7 @@ import {
   Kernel as KernelImpl,
   Kernel__factory,
 } from "../../typechain";
-import { IBasePresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
+import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
 
 export class ECDSAKernel extends UserOperationBuilder {
   private signer: ethers.Signer;
@@ -28,7 +28,7 @@ export class ECDSAKernel extends UserOperationBuilder {
   private constructor(
     signer: ethers.Signer,
     rpcUrl: string,
-    opts?: IBasePresetBuilderOpts
+    opts?: IPresetBuilderOpts
   ) {
     super();
     this.signer = signer;
@@ -58,7 +58,7 @@ export class ECDSAKernel extends UserOperationBuilder {
   public static async init(
     signer: ethers.Signer,
     rpcUrl: string,
-    opts?: IBasePresetBuilderOpts
+    opts?: IPresetBuilderOpts
   ): Promise<ECDSAKernel> {
     const instance = new ECDSAKernel(signer, rpcUrl, opts);
 
