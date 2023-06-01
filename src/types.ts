@@ -88,6 +88,11 @@ export interface IClient {
   ) => Promise<IUserOperation>;
 }
 
+export interface IClientOpts {
+  entryPoint?: string;
+  overrideBundlerRpc?: string;
+}
+
 export interface ISendUserOperationOpts {
   dryRun?: boolean;
   onBuild?: (op: IUserOperation) => Promise<any> | any;
@@ -96,11 +101,6 @@ export interface ISendUserOperationOpts {
 export interface ISendUserOperationResponse {
   userOpHash: string;
   wait: () => Promise<UserOperationEventEvent | null>;
-}
-
-export interface IClientOpts {
-  entryPoint?: string;
-  overrideBundlerRpc?: string;
 }
 
 export interface IBasePresetBuilderOpts {
