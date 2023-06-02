@@ -1,5 +1,5 @@
-import { BigNumberish, BytesLike, ethers } from "ethers";
-import { ERC4337 } from "../../constants";
+import { ethers } from "ethers";
+import { ERC4337, Kernel as KernelConst } from "../../constants";
 import { UserOperationBuilder } from "../../builder";
 import { BundlerJsonRpcProvider } from "../../provider";
 import {
@@ -10,20 +10,20 @@ import {
 import {
   EntryPoint,
   EntryPoint__factory,
-  SimpleAccountFactory,
-  SimpleAccountFactory__factory,
-  SimpleAccount as SimpleAccountImpl,
-  SimpleAccount__factory,
+  ECDSAKernelFactory,
+  ECDSAKernelFactory__factory,
+  Kernel as KernelImpl,
+  Kernel__factory,
 } from "../../typechain";
 import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
 
-export class SimpleAccount extends UserOperationBuilder {
+export class ECDSAKernel extends UserOperationBuilder {
   private signer: ethers.Signer;
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
-  private factory: SimpleAccountFactory;
+  private factory: ECDSAKernelFactory;
   private initCode: string;
-  proxy: SimpleAccountImpl;
+  proxy: KernelImpl;
 
   private constructor(
     signer: ethers.Signer,
@@ -39,12 +39,12 @@ export class SimpleAccount extends UserOperationBuilder {
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider
     );
-    this.factory = SimpleAccountFactory__factory.connect(
-      opts?.factory || ERC4337.SimpleAccount.Factory,
+    this.factory = ECDSAKernelFactory__factory.connect(
+      opts?.factory || KernelConst.ECDSAFactory,
       this.provider
     );
     this.initCode = "0x";
-    this.proxy = SimpleAccount__factory.connect(
+    this.proxy = Kernel__factory.connect(
       ethers.constants.AddressZero,
       this.provider
     );
@@ -59,8 +59,8 @@ export class SimpleAccount extends UserOperationBuilder {
     signer: ethers.Signer,
     rpcUrl: string,
     opts?: IPresetBuilderOpts
-  ): Promise<SimpleAccount> {
-    const instance = new SimpleAccount(signer, rpcUrl, opts);
+  ): Promise<ECDSAKernel> {
+    const instance = new ECDSAKernel(signer, rpcUrl, opts);
 
     try {
       instance.initCode = await ethers.utils.hexConcat([
@@ -77,15 +77,18 @@ export class SimpleAccount extends UserOperationBuilder {
       const addr = error?.errorArgs?.sender;
       if (!addr) throw error;
 
-      instance.proxy = SimpleAccount__factory.connect(addr, instance.provider);
+      instance.proxy = Kernel__factory.connect(addr, instance.provider);
     }
 
     const base = instance
       .useDefaults({
         sender: instance.proxy.address,
-        signature: await instance.signer.signMessage(
-          ethers.utils.arrayify(ethers.utils.keccak256("0xdead"))
-        ),
+        signature: ethers.utils.hexConcat([
+          KernelConst.Modes.Sudo,
+          await instance.signer.signMessage(
+            ethers.utils.arrayify(ethers.utils.keccak256("0xdead"))
+          ),
+        ]),
       })
       .useMiddleware(instance.resolveAccount)
       .useMiddleware(getGasPrice(instance.provider));
@@ -95,17 +98,5 @@ export class SimpleAccount extends UserOperationBuilder {
       : base.useMiddleware(estimateUserOperationGas(instance.provider));
 
     return withPM.useMiddleware(EOASignature(instance.signer));
-  }
-
-  execute(to: string, value: BigNumberish, data: BytesLike) {
-    return this.setCallData(
-      this.proxy.interface.encodeFunctionData("execute", [to, value, data])
-    );
-  }
-
-  executeBatch(to: Array<string>, data: Array<BytesLike>) {
-    return this.setCallData(
-      this.proxy.interface.encodeFunctionData("executeBatch", [to, data])
-    );
   }
 }

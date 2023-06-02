@@ -4,14 +4,14 @@
 
 import { Contract, Signer, utils } from "ethers";
 import type { Provider } from "@ethersproject/providers";
-import type { SimpleAccount, SimpleAccountInterface } from "../SimpleAccount";
+import type { Kernel, KernelInterface } from "../Kernel";
 
 const _abi = [
   {
     inputs: [
       {
         internalType: "contract IEntryPoint",
-        name: "anEntryPoint",
+        name: "_entryPoint",
         type: "address",
       },
     ],
@@ -22,19 +22,44 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
-        name: "previousAdmin",
+        name: "oldValidator",
         type: "address",
       },
       {
-        indexed: false,
+        indexed: true,
         internalType: "address",
-        name: "newAdmin",
+        name: "newValidator",
         type: "address",
       },
     ],
-    name: "AdminChanged",
+    name: "DefaultValidatorChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes4",
+        name: "selector",
+        type: "bytes4",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "executor",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "validator",
+        type: "address",
+      },
+    ],
+    name: "ExecutionChanged",
     type: "event",
   },
   {
@@ -43,52 +68,7 @@ const _abi = [
       {
         indexed: true,
         internalType: "address",
-        name: "beacon",
-        type: "address",
-      },
-    ],
-    name: "BeaconUpgraded",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint8",
-        name: "version",
-        type: "uint8",
-      },
-    ],
-    name: "Initialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "contract IEntryPoint",
-        name: "entryPoint",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
-    name: "SimpleAccountInitialized",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "implementation",
+        name: "newImplementation",
         type: "address",
       },
     ],
@@ -96,10 +76,20 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "addDeposit",
-    outputs: [],
     stateMutability: "payable",
+    type: "fallback",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "_disableFlag",
+        type: "bytes4",
+      },
+    ],
+    name: "disableMode",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -119,7 +109,7 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "dest",
+        name: "to",
         type: "address",
       },
       {
@@ -129,8 +119,13 @@ const _abi = [
       },
       {
         internalType: "bytes",
-        name: "func",
+        name: "data",
         type: "bytes",
+      },
+      {
+        internalType: "enum Operation",
+        name: "operation",
+        type: "uint8",
       },
     ],
     name: "execute",
@@ -139,26 +134,94 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "getDefaultValidator",
+    outputs: [
       {
-        internalType: "address[]",
-        name: "dest",
-        type: "address[]",
-      },
-      {
-        internalType: "bytes[]",
-        name: "func",
-        type: "bytes[]",
+        internalType: "contract IKernelValidator",
+        name: "",
+        type: "address",
       },
     ],
-    name: "executeBatch",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
-    name: "getDeposit",
+    name: "getDisabledMode",
+    outputs: [
+      {
+        internalType: "bytes4",
+        name: "",
+        type: "bytes4",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes4",
+        name: "_selector",
+        type: "bytes4",
+      },
+    ],
+    name: "getExecution",
+    outputs: [
+      {
+        components: [
+          {
+            internalType: "uint48",
+            name: "validUntil",
+            type: "uint48",
+          },
+          {
+            internalType: "uint48",
+            name: "validAfter",
+            type: "uint48",
+          },
+          {
+            internalType: "address",
+            name: "executor",
+            type: "address",
+          },
+          {
+            internalType: "contract IKernelValidator",
+            name: "validator",
+            type: "address",
+          },
+        ],
+        internalType: "struct ExecutionDetail",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getLastDisabledTime",
+    outputs: [
+      {
+        internalType: "uint48",
+        name: "",
+        type: "uint48",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint192",
+        name: "key",
+        type: "uint192",
+      },
+    ],
+    name: "getNonce",
     outputs: [
       {
         internalType: "uint256",
@@ -185,14 +248,56 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "anOwner",
+        internalType: "contract IKernelValidator",
+        name: "_defaultValidator",
         type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "_data",
+        type: "bytes",
       },
     ],
     name: "initialize",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "hash",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes",
+        name: "signature",
+        type: "bytes",
+      },
+    ],
+    name: "isValidSignature",
+    outputs: [
+      {
+        internalType: "bytes4",
+        name: "",
+        type: "bytes4",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "name",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -308,97 +413,57 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "owner",
-    outputs: [
+    inputs: [
       {
-        internalType: "address",
-        name: "",
+        internalType: "contract IKernelValidator",
+        name: "_defaultValidator",
         type: "address",
       },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "proxiableUUID",
-    outputs: [
       {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
+        internalType: "bytes",
+        name: "_data",
+        type: "bytes",
       },
     ],
-    stateMutability: "view",
+    name: "setDefaultValidator",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
       {
         internalType: "bytes4",
-        name: "interfaceId",
+        name: "_selector",
         type: "bytes4",
       },
-    ],
-    name: "supportsInterface",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
       {
         internalType: "address",
-        name: "",
+        name: "_executor",
         type: "address",
       },
       {
-        internalType: "address",
-        name: "",
+        internalType: "contract IKernelValidator",
+        name: "_validator",
         type: "address",
       },
       {
-        internalType: "address",
-        name: "",
-        type: "address",
+        internalType: "uint48",
+        name: "_validUntil",
+        type: "uint48",
       },
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: "uint48",
+        name: "_validAfter",
+        type: "uint48",
       },
       {
         internalType: "bytes",
-        name: "",
-        type: "bytes",
-      },
-      {
-        internalType: "bytes",
-        name: "",
+        name: "_enableData",
         type: "bytes",
       },
     ],
-    name: "tokensReceived",
-    outputs: [],
-    stateMutability: "pure",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newImplementation",
-        type: "address",
-      },
-    ],
-    name: "upgradeTo",
+    name: "setExecution",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -407,18 +472,13 @@ const _abi = [
     inputs: [
       {
         internalType: "address",
-        name: "newImplementation",
+        name: "_newImplementation",
         type: "address",
       },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
     ],
-    name: "upgradeToAndCall",
+    name: "upgradeTo",
     outputs: [],
-    stateMutability: "payable",
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -508,21 +568,16 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [
+    inputs: [],
+    name: "version",
+    outputs: [
       {
-        internalType: "address payable",
-        name: "withdrawAddress",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
-    name: "withdrawDepositTo",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -531,15 +586,12 @@ const _abi = [
   },
 ] as const;
 
-export class SimpleAccount__factory {
+export class Kernel__factory {
   static readonly abi = _abi;
-  static createInterface(): SimpleAccountInterface {
-    return new utils.Interface(_abi) as SimpleAccountInterface;
+  static createInterface(): KernelInterface {
+    return new utils.Interface(_abi) as KernelInterface;
   }
-  static connect(
-    address: string,
-    signerOrProvider: Signer | Provider
-  ): SimpleAccount {
-    return new Contract(address, _abi, signerOrProvider) as SimpleAccount;
+  static connect(address: string, signerOrProvider: Signer | Provider): Kernel {
+    return new Contract(address, _abi, signerOrProvider) as Kernel;
   }
 }
