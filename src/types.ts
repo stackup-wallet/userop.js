@@ -109,3 +109,9 @@ export interface IPresetBuilderOpts {
   paymasterMiddleware?: UserOperationMiddlewareFn;
   overrideBundlerRpc?: string;
 }
+
+export interface ICall {
+  to: string;
+  value: BigNumberish;
+  data: BytesLike;
+}
