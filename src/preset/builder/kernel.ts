@@ -19,7 +19,7 @@ import {
 } from "../../typechain";
 import {
   IPresetBuilderOpts,
-  Call,
+  ICall,
   UserOperationMiddlewareFn,
 } from "../../types";
 import { Safe } from "../../constants/safe";
@@ -133,7 +133,7 @@ export class Kernel extends UserOperationBuilder {
       .useMiddleware(instance.sudoMode);
   }
 
-  execute(call: Call) {
+  execute(call: ICall) {
     return this.setCallData(
       this.proxy.interface.encodeFunctionData("execute", [
         call.to,
@@ -144,7 +144,7 @@ export class Kernel extends UserOperationBuilder {
     );
   }
 
-  executeBatch(calls: Array<Call>) {
+  executeBatch(calls: Array<ICall>) {
     const data = this.multisend.interface.encodeFunctionData("multiSend", [
       ethers.utils.hexConcat(
         calls.map((c) =>

@@ -110,7 +110,7 @@ export interface IPresetBuilderOpts {
   overrideBundlerRpc?: string;
 }
 
-export interface Call {
+export interface ICall {
   to: string;
   value: BigNumberish;
   data: BytesLike;
