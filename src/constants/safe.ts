@@ -1,4 +1,8 @@
-export const Safe = {
+interface ISafeConstant {
+  MultiSend: Record<string, string>;
+}
+
+export const Safe: ISafeConstant = {
   // From https://github.com/safe-global/safe-deployments/blob/main/src/assets/v1.3.0/multi_send.json
   MultiSend: {
     "1": "0xA238CBeb142c10Ef7Ad8442C6D1f9E89e07e7761",

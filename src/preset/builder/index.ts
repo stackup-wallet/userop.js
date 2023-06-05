@@ -1,2 +1,2 @@
-export * from "./ecdsaKernel";
+export * from "./kernel";
 export * from "./simpleAccount";
