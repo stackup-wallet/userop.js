@@ -19,7 +19,6 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "./common";
 
 export interface MultisendInterface extends utils.Interface {
@@ -31,7 +30,7 @@ export interface MultisendInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "multiSend",
-    values: [PromiseOrValue<BytesLike>]
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(functionFragment: "multiSend", data: BytesLike): Result;
@@ -67,19 +66,19 @@ export interface Multisend extends BaseContract {
 
   functions: {
     multiSend(
-      transactions: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      transactions: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
   };
 
   multiSend(
-    transactions: PromiseOrValue<BytesLike>,
-    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    transactions: BytesLike,
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     multiSend(
-      transactions: PromiseOrValue<BytesLike>,
+      transactions: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -88,15 +87,15 @@ export interface Multisend extends BaseContract {
 
   estimateGas: {
     multiSend(
-      transactions: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      transactions: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     multiSend(
-      transactions: PromiseOrValue<BytesLike>,
-      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+      transactions: BytesLike,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }

@@ -20,7 +20,6 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
-  PromiseOrValue,
 } from "./common";
 
 export interface ECDSAKernelFactoryInterface extends utils.Interface {
@@ -43,7 +42,7 @@ export interface ECDSAKernelFactoryInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "createAccount",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "entryPoint",
@@ -51,7 +50,7 @@ export interface ECDSAKernelFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAccountAddress",
-    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "singletonFactory",
@@ -105,16 +104,16 @@ export interface ECDSAKernelFactory extends BaseContract {
 
   functions: {
     createAccount(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _owner: string,
+      _index: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<[string]>;
 
     getAccountAddress(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
+      _owner: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -124,16 +123,16 @@ export interface ECDSAKernelFactory extends BaseContract {
   };
 
   createAccount(
-    _owner: PromiseOrValue<string>,
-    _index: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
+    _owner: string,
+    _index: BigNumberish,
+    overrides?: Overrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   entryPoint(overrides?: CallOverrides): Promise<string>;
 
   getAccountAddress(
-    _owner: PromiseOrValue<string>,
-    _index: PromiseOrValue<BigNumberish>,
+    _owner: string,
+    _index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -143,16 +142,16 @@ export interface ECDSAKernelFactory extends BaseContract {
 
   callStatic: {
     createAccount(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
+      _owner: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
     entryPoint(overrides?: CallOverrides): Promise<string>;
 
     getAccountAddress(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
+      _owner: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -165,16 +164,16 @@ export interface ECDSAKernelFactory extends BaseContract {
 
   estimateGas: {
     createAccount(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _owner: string,
+      _index: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<BigNumber>;
 
     entryPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAccountAddress(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
+      _owner: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -185,16 +184,16 @@ export interface ECDSAKernelFactory extends BaseContract {
 
   populateTransaction: {
     createAccount(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
+      _owner: string,
+      _index: BigNumberish,
+      overrides?: Overrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAccountAddress(
-      _owner: PromiseOrValue<string>,
-      _index: PromiseOrValue<BigNumberish>,
+      _owner: string,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
