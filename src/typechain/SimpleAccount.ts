@@ -25,20 +25,21 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export type UserOperationStruct = {
-  sender: string;
-  nonce: BigNumberish;
-  initCode: BytesLike;
-  callData: BytesLike;
-  callGasLimit: BigNumberish;
-  verificationGasLimit: BigNumberish;
-  preVerificationGas: BigNumberish;
-  maxFeePerGas: BigNumberish;
-  maxPriorityFeePerGas: BigNumberish;
-  paymasterAndData: BytesLike;
-  signature: BytesLike;
+  sender: PromiseOrValue<string>;
+  nonce: PromiseOrValue<BigNumberish>;
+  initCode: PromiseOrValue<BytesLike>;
+  callData: PromiseOrValue<BytesLike>;
+  callGasLimit: PromiseOrValue<BigNumberish>;
+  verificationGasLimit: PromiseOrValue<BigNumberish>;
+  preVerificationGas: PromiseOrValue<BigNumberish>;
+  maxFeePerGas: PromiseOrValue<BigNumberish>;
+  maxPriorityFeePerGas: PromiseOrValue<BigNumberish>;
+  paymasterAndData: PromiseOrValue<BytesLike>;
+  signature: PromiseOrValue<BytesLike>;
 };
 
 export type UserOperationStructOutput = [
@@ -121,29 +122,53 @@ export interface SimpleAccountInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
-    values: [string, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "executeBatch",
-    values: [string[], BytesLike[]]
+    values: [PromiseOrValue<string>[], PromiseOrValue<BytesLike>[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getDeposit",
     values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "getNonce", values?: undefined): string;
-  encodeFunctionData(functionFragment: "initialize", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155Received",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC721Received",
-    values: [string, string, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
@@ -152,24 +177,38 @@ export interface SimpleAccountInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "tokensReceived",
-    values: [string, string, string, BigNumberish, BytesLike, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
-    values: [string, BytesLike]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "validateUserOp",
-    values: [UserOperationStruct, BytesLike, BigNumberish]
+    values: [
+      UserOperationStruct,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawDepositTo",
-    values: [string, BigNumberish]
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(functionFragment: "addDeposit", data: BytesLike): Result;
@@ -311,22 +350,22 @@ export interface SimpleAccount extends BaseContract {
 
   functions: {
     addDeposit(
-      overrides?: PayableOverrides & { from?: string }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<[string]>;
 
     execute(
-      dest: string,
-      value: BigNumberish,
-      func: BytesLike,
-      overrides?: Overrides & { from?: string }
+      dest: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      func: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     executeBatch(
-      dest: string[],
-      func: BytesLike[],
-      overrides?: Overrides & { from?: string }
+      dest: PromiseOrValue<string>[],
+      func: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getDeposit(overrides?: CallOverrides): Promise<[BigNumber]>;
@@ -334,33 +373,33 @@ export interface SimpleAccount extends BaseContract {
     getNonce(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     initialize(
-      anOwner: string,
-      overrides?: Overrides & { from?: string }
+      anOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -369,62 +408,62 @@ export interface SimpleAccount extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     supportsInterface(
-      interfaceId: BytesLike,
+      interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
     tokensReceived(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BytesLike,
-      arg5: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
+      arg5: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[void]>;
 
     upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     withdrawDepositTo(
-      withdrawAddress: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      withdrawAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
 
   addDeposit(
-    overrides?: PayableOverrides & { from?: string }
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   entryPoint(overrides?: CallOverrides): Promise<string>;
 
   execute(
-    dest: string,
-    value: BigNumberish,
-    func: BytesLike,
-    overrides?: Overrides & { from?: string }
+    dest: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    func: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   executeBatch(
-    dest: string[],
-    func: BytesLike[],
-    overrides?: Overrides & { from?: string }
+    dest: PromiseOrValue<string>[],
+    func: PromiseOrValue<BytesLike>[],
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getDeposit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -432,33 +471,33 @@ export interface SimpleAccount extends BaseContract {
   getNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
   initialize(
-    anOwner: string,
-    overrides?: Overrides & { from?: string }
+    anOwner: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   onERC1155BatchReceived(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish[],
-    arg3: BigNumberish[],
-    arg4: BytesLike,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>[],
+    arg3: PromiseOrValue<BigNumberish>[],
+    arg4: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   onERC1155Received(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish,
-    arg3: BigNumberish,
-    arg4: BytesLike,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>,
+    arg3: PromiseOrValue<BigNumberish>,
+    arg4: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   onERC721Received(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish,
-    arg3: BytesLike,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>,
+    arg3: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -467,42 +506,42 @@ export interface SimpleAccount extends BaseContract {
   proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   supportsInterface(
-    interfaceId: BytesLike,
+    interfaceId: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
   tokensReceived(
-    arg0: string,
-    arg1: string,
-    arg2: string,
-    arg3: BigNumberish,
-    arg4: BytesLike,
-    arg5: BytesLike,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<string>,
+    arg3: PromiseOrValue<BigNumberish>,
+    arg4: PromiseOrValue<BytesLike>,
+    arg5: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<void>;
 
   upgradeTo(
-    newImplementation: string,
-    overrides?: Overrides & { from?: string }
+    newImplementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   upgradeToAndCall(
-    newImplementation: string,
-    data: BytesLike,
-    overrides?: PayableOverrides & { from?: string }
+    newImplementation: PromiseOrValue<string>,
+    data: PromiseOrValue<BytesLike>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   validateUserOp(
     userOp: UserOperationStruct,
-    userOpHash: BytesLike,
-    missingAccountFunds: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    userOpHash: PromiseOrValue<BytesLike>,
+    missingAccountFunds: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   withdrawDepositTo(
-    withdrawAddress: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    withdrawAddress: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -511,15 +550,15 @@ export interface SimpleAccount extends BaseContract {
     entryPoint(overrides?: CallOverrides): Promise<string>;
 
     execute(
-      dest: string,
-      value: BigNumberish,
-      func: BytesLike,
+      dest: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      func: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     executeBatch(
-      dest: string[],
-      func: BytesLike[],
+      dest: PromiseOrValue<string>[],
+      func: PromiseOrValue<BytesLike>[],
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -527,31 +566,34 @@ export interface SimpleAccount extends BaseContract {
 
     getNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
-    initialize(anOwner: string, overrides?: CallOverrides): Promise<void>;
+    initialize(
+      anOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -560,41 +602,41 @@ export interface SimpleAccount extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     supportsInterface(
-      interfaceId: BytesLike,
+      interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
     tokensReceived(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BytesLike,
-      arg5: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
+      arg5: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     upgradeTo(
-      newImplementation: string,
+      newImplementation: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     withdrawDepositTo(
-      withdrawAddress: string,
-      amount: BigNumberish,
+      withdrawAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -610,44 +652,50 @@ export interface SimpleAccount extends BaseContract {
     ): AdminChangedEventFilter;
 
     "BeaconUpgraded(address)"(
-      beacon?: string | null
+      beacon?: PromiseOrValue<string> | null
     ): BeaconUpgradedEventFilter;
-    BeaconUpgraded(beacon?: string | null): BeaconUpgradedEventFilter;
+    BeaconUpgraded(
+      beacon?: PromiseOrValue<string> | null
+    ): BeaconUpgradedEventFilter;
 
     "Initialized(uint8)"(version?: null): InitializedEventFilter;
     Initialized(version?: null): InitializedEventFilter;
 
     "SimpleAccountInitialized(address,address)"(
-      entryPoint?: string | null,
-      owner?: string | null
+      entryPoint?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null
     ): SimpleAccountInitializedEventFilter;
     SimpleAccountInitialized(
-      entryPoint?: string | null,
-      owner?: string | null
+      entryPoint?: PromiseOrValue<string> | null,
+      owner?: PromiseOrValue<string> | null
     ): SimpleAccountInitializedEventFilter;
 
-    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
-    Upgraded(implementation?: string | null): UpgradedEventFilter;
+    "Upgraded(address)"(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+    Upgraded(
+      implementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
   };
 
   estimateGas: {
     addDeposit(
-      overrides?: PayableOverrides & { from?: string }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     entryPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     execute(
-      dest: string,
-      value: BigNumberish,
-      func: BytesLike,
-      overrides?: Overrides & { from?: string }
+      dest: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      func: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     executeBatch(
-      dest: string[],
-      func: BytesLike[],
-      overrides?: Overrides & { from?: string }
+      dest: PromiseOrValue<string>[],
+      func: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getDeposit(overrides?: CallOverrides): Promise<BigNumber>;
@@ -655,33 +703,33 @@ export interface SimpleAccount extends BaseContract {
     getNonce(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      anOwner: string,
-      overrides?: Overrides & { from?: string }
+      anOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -690,63 +738,63 @@ export interface SimpleAccount extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     supportsInterface(
-      interfaceId: BytesLike,
+      interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     tokensReceived(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BytesLike,
-      arg5: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
+      arg5: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     withdrawDepositTo(
-      withdrawAddress: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      withdrawAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     addDeposit(
-      overrides?: PayableOverrides & { from?: string }
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     execute(
-      dest: string,
-      value: BigNumberish,
-      func: BytesLike,
-      overrides?: Overrides & { from?: string }
+      dest: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      func: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     executeBatch(
-      dest: string[],
-      func: BytesLike[],
-      overrides?: Overrides & { from?: string }
+      dest: PromiseOrValue<string>[],
+      func: PromiseOrValue<BytesLike>[],
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getDeposit(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -754,33 +802,33 @@ export interface SimpleAccount extends BaseContract {
     getNonce(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
-      anOwner: string,
-      overrides?: Overrides & { from?: string }
+      anOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -789,42 +837,42 @@ export interface SimpleAccount extends BaseContract {
     proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     supportsInterface(
-      interfaceId: BytesLike,
+      interfaceId: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     tokensReceived(
-      arg0: string,
-      arg1: string,
-      arg2: string,
-      arg3: BigNumberish,
-      arg4: BytesLike,
-      arg5: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<string>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
+      arg5: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     upgradeTo(
-      newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeToAndCall(
-      newImplementation: string,
-      data: BytesLike,
-      overrides?: PayableOverrides & { from?: string }
+      newImplementation: PromiseOrValue<string>,
+      data: PromiseOrValue<BytesLike>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     withdrawDepositTo(
-      withdrawAddress: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      withdrawAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
 }

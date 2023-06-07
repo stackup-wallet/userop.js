@@ -24,6 +24,7 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export interface KernelFactoryInterface extends utils.Interface {
@@ -46,7 +47,11 @@ export interface KernelFactoryInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "createAccount",
-    values: [string, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "entryPoint",
@@ -54,7 +59,11 @@ export interface KernelFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAccountAddress",
-    values: [string, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "kernelTemplate",
@@ -131,18 +140,18 @@ export interface KernelFactory extends BaseContract {
 
   functions: {
     createAccount(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<[string]>;
 
     getAccountAddress(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -152,18 +161,18 @@ export interface KernelFactory extends BaseContract {
   };
 
   createAccount(
-    _validator: string,
-    _data: BytesLike,
-    _index: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    _validator: PromiseOrValue<string>,
+    _data: PromiseOrValue<BytesLike>,
+    _index: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   entryPoint(overrides?: CallOverrides): Promise<string>;
 
   getAccountAddress(
-    _validator: string,
-    _data: BytesLike,
-    _index: BigNumberish,
+    _validator: PromiseOrValue<string>,
+    _data: PromiseOrValue<BytesLike>,
+    _index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -173,18 +182,18 @@ export interface KernelFactory extends BaseContract {
 
   callStatic: {
     createAccount(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     entryPoint(overrides?: CallOverrides): Promise<string>;
 
     getAccountAddress(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -195,14 +204,14 @@ export interface KernelFactory extends BaseContract {
 
   filters: {
     "AccountCreated(address,address,bytes,uint256)"(
-      account?: string | null,
-      validator?: string | null,
+      account?: PromiseOrValue<string> | null,
+      validator?: PromiseOrValue<string> | null,
       data?: null,
       index?: null
     ): AccountCreatedEventFilter;
     AccountCreated(
-      account?: string | null,
-      validator?: string | null,
+      account?: PromiseOrValue<string> | null,
+      validator?: PromiseOrValue<string> | null,
       data?: null,
       index?: null
     ): AccountCreatedEventFilter;
@@ -210,18 +219,18 @@ export interface KernelFactory extends BaseContract {
 
   estimateGas: {
     createAccount(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     entryPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAccountAddress(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -232,18 +241,18 @@ export interface KernelFactory extends BaseContract {
 
   populateTransaction: {
     createAccount(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAccountAddress(
-      _validator: string,
-      _data: BytesLike,
-      _index: BigNumberish,
+      _validator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      _index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

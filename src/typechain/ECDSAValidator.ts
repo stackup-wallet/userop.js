@@ -24,20 +24,21 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export type UserOperationStruct = {
-  sender: string;
-  nonce: BigNumberish;
-  initCode: BytesLike;
-  callData: BytesLike;
-  callGasLimit: BigNumberish;
-  verificationGasLimit: BigNumberish;
-  preVerificationGas: BigNumberish;
-  maxFeePerGas: BigNumberish;
-  maxPriorityFeePerGas: BigNumberish;
-  paymasterAndData: BytesLike;
-  signature: BytesLike;
+  sender: PromiseOrValue<string>;
+  nonce: PromiseOrValue<BigNumberish>;
+  initCode: PromiseOrValue<BytesLike>;
+  callData: PromiseOrValue<BytesLike>;
+  callGasLimit: PromiseOrValue<BigNumberish>;
+  verificationGasLimit: PromiseOrValue<BigNumberish>;
+  preVerificationGas: PromiseOrValue<BigNumberish>;
+  maxFeePerGas: PromiseOrValue<BigNumberish>;
+  maxPriorityFeePerGas: PromiseOrValue<BigNumberish>;
+  paymasterAndData: PromiseOrValue<BytesLike>;
+  signature: PromiseOrValue<BytesLike>;
 };
 
 export type UserOperationStructOutput = [
@@ -84,19 +85,29 @@ export interface ECDSAValidatorInterface extends utils.Interface {
       | "validateUserOp"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "disable", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "disable",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "ecdsaValidatorStorage",
-    values: [string]
+    values: [PromiseOrValue<string>]
   ): string;
-  encodeFunctionData(functionFragment: "enable", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "enable",
+    values: [PromiseOrValue<BytesLike>]
+  ): string;
   encodeFunctionData(
     functionFragment: "validateSignature",
-    values: [BytesLike, BytesLike]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "validateUserOp",
-    values: [UserOperationStruct, BytesLike, BigNumberish]
+    values: [
+      UserOperationStruct,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
 
   decodeFunctionResult(functionFragment: "disable", data: BytesLike): Result;
@@ -161,155 +172,161 @@ export interface ECDSAValidator extends BaseContract {
 
   functions: {
     disable(
-      arg0: BytesLike,
-      overrides?: Overrides & { from?: string }
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     ecdsaValidatorStorage(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string] & { owner: string }>;
 
     enable(
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     validateSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     validateUserOp(
       _userOp: UserOperationStruct,
-      _userOpHash: BytesLike,
-      arg2: BigNumberish,
+      _userOpHash: PromiseOrValue<BytesLike>,
+      arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { validationData: BigNumber }>;
   };
 
   disable(
-    arg0: BytesLike,
-    overrides?: Overrides & { from?: string }
+    arg0: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   ecdsaValidatorStorage(
-    arg0: string,
+    arg0: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   enable(
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string }
+    _data: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   validateSignature(
-    hash: BytesLike,
-    signature: BytesLike,
+    hash: PromiseOrValue<BytesLike>,
+    signature: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   validateUserOp(
     _userOp: UserOperationStruct,
-    _userOpHash: BytesLike,
-    arg2: BigNumberish,
+    _userOpHash: PromiseOrValue<BytesLike>,
+    arg2: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   callStatic: {
-    disable(arg0: BytesLike, overrides?: CallOverrides): Promise<void>;
+    disable(
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     ecdsaValidatorStorage(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    enable(_data: BytesLike, overrides?: CallOverrides): Promise<void>;
+    enable(
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     validateSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     validateUserOp(
       _userOp: UserOperationStruct,
-      _userOpHash: BytesLike,
-      arg2: BigNumberish,
+      _userOpHash: PromiseOrValue<BytesLike>,
+      arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   filters: {
     "OwnerChanged(address,address,address)"(
-      kernel?: string | null,
-      oldOwner?: string | null,
-      newOwner?: string | null
+      kernel?: PromiseOrValue<string> | null,
+      oldOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnerChangedEventFilter;
     OwnerChanged(
-      kernel?: string | null,
-      oldOwner?: string | null,
-      newOwner?: string | null
+      kernel?: PromiseOrValue<string> | null,
+      oldOwner?: PromiseOrValue<string> | null,
+      newOwner?: PromiseOrValue<string> | null
     ): OwnerChangedEventFilter;
   };
 
   estimateGas: {
     disable(
-      arg0: BytesLike,
-      overrides?: Overrides & { from?: string }
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     ecdsaValidatorStorage(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     enable(
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     validateSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     validateUserOp(
       _userOp: UserOperationStruct,
-      _userOpHash: BytesLike,
-      arg2: BigNumberish,
+      _userOpHash: PromiseOrValue<BytesLike>,
+      arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     disable(
-      arg0: BytesLike,
-      overrides?: Overrides & { from?: string }
+      arg0: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     ecdsaValidatorStorage(
-      arg0: string,
+      arg0: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     enable(
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     validateSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     validateUserOp(
       _userOp: UserOperationStruct,
-      _userOpHash: BytesLike,
-      arg2: BigNumberish,
+      _userOpHash: PromiseOrValue<BytesLike>,
+      arg2: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

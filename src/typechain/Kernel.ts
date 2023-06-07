@@ -24,13 +24,14 @@ import type {
   TypedEvent,
   TypedListener,
   OnEvent,
+  PromiseOrValue,
 } from "./common";
 
 export type ExecutionDetailStruct = {
-  validUntil: BigNumberish;
-  validAfter: BigNumberish;
-  executor: string;
-  validator: string;
+  validUntil: PromiseOrValue<BigNumberish>;
+  validAfter: PromiseOrValue<BigNumberish>;
+  executor: PromiseOrValue<string>;
+  validator: PromiseOrValue<string>;
 };
 
 export type ExecutionDetailStructOutput = [number, number, string, string] & {
@@ -41,17 +42,17 @@ export type ExecutionDetailStructOutput = [number, number, string, string] & {
 };
 
 export type UserOperationStruct = {
-  sender: string;
-  nonce: BigNumberish;
-  initCode: BytesLike;
-  callData: BytesLike;
-  callGasLimit: BigNumberish;
-  verificationGasLimit: BigNumberish;
-  preVerificationGas: BigNumberish;
-  maxFeePerGas: BigNumberish;
-  maxPriorityFeePerGas: BigNumberish;
-  paymasterAndData: BytesLike;
-  signature: BytesLike;
+  sender: PromiseOrValue<string>;
+  nonce: PromiseOrValue<BigNumberish>;
+  initCode: PromiseOrValue<BytesLike>;
+  callData: PromiseOrValue<BytesLike>;
+  callGasLimit: PromiseOrValue<BigNumberish>;
+  verificationGasLimit: PromiseOrValue<BigNumberish>;
+  preVerificationGas: PromiseOrValue<BigNumberish>;
+  maxFeePerGas: PromiseOrValue<BigNumberish>;
+  maxPriorityFeePerGas: PromiseOrValue<BigNumberish>;
+  paymasterAndData: PromiseOrValue<BytesLike>;
+  signature: PromiseOrValue<BytesLike>;
 };
 
 export type UserOperationStructOutput = [
@@ -130,7 +131,7 @@ export interface KernelInterface extends utils.Interface {
 
   encodeFunctionData(
     functionFragment: "disableMode",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "entryPoint",
@@ -138,7 +139,12 @@ export interface KernelInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
-    values: [string, BigNumberish, BytesLike, BigNumberish]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "getDefaultValidator",
@@ -150,7 +156,7 @@ export interface KernelInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getExecution",
-    values: [BytesLike]
+    values: [PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "getLastDisabledTime",
@@ -158,7 +164,7 @@ export interface KernelInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getNonce(uint192)",
-    values: [BigNumberish]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getNonce()",
@@ -166,37 +172,68 @@ export interface KernelInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, BytesLike]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "isValidSignature",
-    values: [BytesLike, BytesLike]
+    values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BigNumberish>[],
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC1155Received",
-    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "onERC721Received",
-    values: [string, string, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "setDefaultValidator",
-    values: [string, BytesLike]
+    values: [PromiseOrValue<string>, PromiseOrValue<BytesLike>]
   ): string;
   encodeFunctionData(
     functionFragment: "setExecution",
-    values: [BytesLike, string, string, BigNumberish, BigNumberish, BytesLike]
+    values: [
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<BytesLike>
+    ]
   ): string;
-  encodeFunctionData(functionFragment: "upgradeTo", values: [string]): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [PromiseOrValue<string>]
+  ): string;
   encodeFunctionData(
     functionFragment: "validateUserOp",
-    values: [UserOperationStruct, BytesLike, BigNumberish]
+    values: [
+      UserOperationStruct,
+      PromiseOrValue<BytesLike>,
+      PromiseOrValue<BigNumberish>
+    ]
   ): string;
   encodeFunctionData(functionFragment: "version", values?: undefined): string;
 
@@ -331,18 +368,18 @@ export interface Kernel extends BaseContract {
 
   functions: {
     disableMode(
-      _disableFlag: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _disableFlag: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<[string]>;
 
     execute(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     getDefaultValidator(overrides?: CallOverrides): Promise<[string]>;
@@ -350,103 +387,103 @@ export interface Kernel extends BaseContract {
     getDisabledMode(overrides?: CallOverrides): Promise<[string]>;
 
     getExecution(
-      _selector: BytesLike,
+      _selector: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[ExecutionDetailStructOutput]>;
 
     getLastDisabledTime(overrides?: CallOverrides): Promise<[number]>;
 
     "getNonce(uint192)"(
-      key: BigNumberish,
+      key: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     "getNonce()"(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     initialize(
-      _defaultValidator: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isValidSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     name(overrides?: CallOverrides): Promise<[string]>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
     setDefaultValidator(
-      _defaultValidator: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     setExecution(
-      _selector: BytesLike,
-      _executor: string,
-      _validator: string,
-      _validUntil: BigNumberish,
-      _validAfter: BigNumberish,
-      _enableData: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _selector: PromiseOrValue<BytesLike>,
+      _executor: PromiseOrValue<string>,
+      _validator: PromiseOrValue<string>,
+      _validUntil: PromiseOrValue<BigNumberish>,
+      _validAfter: PromiseOrValue<BigNumberish>,
+      _enableData: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     upgradeTo(
-      _newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      _newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     version(overrides?: CallOverrides): Promise<[string]>;
   };
 
   disableMode(
-    _disableFlag: BytesLike,
-    overrides?: Overrides & { from?: string }
+    _disableFlag: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   entryPoint(overrides?: CallOverrides): Promise<string>;
 
   execute(
-    to: string,
-    value: BigNumberish,
-    data: BytesLike,
-    operation: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    to: PromiseOrValue<string>,
+    value: PromiseOrValue<BigNumberish>,
+    data: PromiseOrValue<BytesLike>,
+    operation: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   getDefaultValidator(overrides?: CallOverrides): Promise<string>;
@@ -454,102 +491,102 @@ export interface Kernel extends BaseContract {
   getDisabledMode(overrides?: CallOverrides): Promise<string>;
 
   getExecution(
-    _selector: BytesLike,
+    _selector: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<ExecutionDetailStructOutput>;
 
   getLastDisabledTime(overrides?: CallOverrides): Promise<number>;
 
   "getNonce(uint192)"(
-    key: BigNumberish,
+    key: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   "getNonce()"(overrides?: CallOverrides): Promise<BigNumber>;
 
   initialize(
-    _defaultValidator: string,
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string }
+    _defaultValidator: PromiseOrValue<string>,
+    _data: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isValidSignature(
-    hash: BytesLike,
-    signature: BytesLike,
+    hash: PromiseOrValue<BytesLike>,
+    signature: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   name(overrides?: CallOverrides): Promise<string>;
 
   onERC1155BatchReceived(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish[],
-    arg3: BigNumberish[],
-    arg4: BytesLike,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>[],
+    arg3: PromiseOrValue<BigNumberish>[],
+    arg4: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   onERC1155Received(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish,
-    arg3: BigNumberish,
-    arg4: BytesLike,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>,
+    arg3: PromiseOrValue<BigNumberish>,
+    arg4: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   onERC721Received(
-    arg0: string,
-    arg1: string,
-    arg2: BigNumberish,
-    arg3: BytesLike,
+    arg0: PromiseOrValue<string>,
+    arg1: PromiseOrValue<string>,
+    arg2: PromiseOrValue<BigNumberish>,
+    arg3: PromiseOrValue<BytesLike>,
     overrides?: CallOverrides
   ): Promise<string>;
 
   setDefaultValidator(
-    _defaultValidator: string,
-    _data: BytesLike,
-    overrides?: Overrides & { from?: string }
+    _defaultValidator: PromiseOrValue<string>,
+    _data: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   setExecution(
-    _selector: BytesLike,
-    _executor: string,
-    _validator: string,
-    _validUntil: BigNumberish,
-    _validAfter: BigNumberish,
-    _enableData: BytesLike,
-    overrides?: Overrides & { from?: string }
+    _selector: PromiseOrValue<BytesLike>,
+    _executor: PromiseOrValue<string>,
+    _validator: PromiseOrValue<string>,
+    _validUntil: PromiseOrValue<BigNumberish>,
+    _validAfter: PromiseOrValue<BigNumberish>,
+    _enableData: PromiseOrValue<BytesLike>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   upgradeTo(
-    _newImplementation: string,
-    overrides?: Overrides & { from?: string }
+    _newImplementation: PromiseOrValue<string>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   validateUserOp(
     userOp: UserOperationStruct,
-    userOpHash: BytesLike,
-    missingAccountFunds: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    userOpHash: PromiseOrValue<BytesLike>,
+    missingAccountFunds: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   version(overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
     disableMode(
-      _disableFlag: BytesLike,
+      _disableFlag: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     entryPoint(overrides?: CallOverrides): Promise<string>;
 
     execute(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -558,84 +595,84 @@ export interface Kernel extends BaseContract {
     getDisabledMode(overrides?: CallOverrides): Promise<string>;
 
     getExecution(
-      _selector: BytesLike,
+      _selector: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<ExecutionDetailStructOutput>;
 
     getLastDisabledTime(overrides?: CallOverrides): Promise<number>;
 
     "getNonce(uint192)"(
-      key: BigNumberish,
+      key: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getNonce()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      _defaultValidator: string,
-      _data: BytesLike,
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     isValidSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     name(overrides?: CallOverrides): Promise<string>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<string>;
 
     setDefaultValidator(
-      _defaultValidator: string,
-      _data: BytesLike,
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     setExecution(
-      _selector: BytesLike,
-      _executor: string,
-      _validator: string,
-      _validUntil: BigNumberish,
-      _validAfter: BigNumberish,
-      _enableData: BytesLike,
+      _selector: PromiseOrValue<BytesLike>,
+      _executor: PromiseOrValue<string>,
+      _validator: PromiseOrValue<string>,
+      _validUntil: PromiseOrValue<BigNumberish>,
+      _validAfter: PromiseOrValue<BigNumberish>,
+      _enableData: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     upgradeTo(
-      _newImplementation: string,
+      _newImplementation: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -644,43 +681,47 @@ export interface Kernel extends BaseContract {
 
   filters: {
     "DefaultValidatorChanged(address,address)"(
-      oldValidator?: string | null,
-      newValidator?: string | null
+      oldValidator?: PromiseOrValue<string> | null,
+      newValidator?: PromiseOrValue<string> | null
     ): DefaultValidatorChangedEventFilter;
     DefaultValidatorChanged(
-      oldValidator?: string | null,
-      newValidator?: string | null
+      oldValidator?: PromiseOrValue<string> | null,
+      newValidator?: PromiseOrValue<string> | null
     ): DefaultValidatorChangedEventFilter;
 
     "ExecutionChanged(bytes4,address,address)"(
-      selector?: BytesLike | null,
-      executor?: string | null,
-      validator?: string | null
+      selector?: PromiseOrValue<BytesLike> | null,
+      executor?: PromiseOrValue<string> | null,
+      validator?: PromiseOrValue<string> | null
     ): ExecutionChangedEventFilter;
     ExecutionChanged(
-      selector?: BytesLike | null,
-      executor?: string | null,
-      validator?: string | null
+      selector?: PromiseOrValue<BytesLike> | null,
+      executor?: PromiseOrValue<string> | null,
+      validator?: PromiseOrValue<string> | null
     ): ExecutionChangedEventFilter;
 
-    "Upgraded(address)"(newImplementation?: string | null): UpgradedEventFilter;
-    Upgraded(newImplementation?: string | null): UpgradedEventFilter;
+    "Upgraded(address)"(
+      newImplementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
+    Upgraded(
+      newImplementation?: PromiseOrValue<string> | null
+    ): UpgradedEventFilter;
   };
 
   estimateGas: {
     disableMode(
-      _disableFlag: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _disableFlag: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     entryPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     execute(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     getDefaultValidator(overrides?: CallOverrides): Promise<BigNumber>;
@@ -688,85 +729,85 @@ export interface Kernel extends BaseContract {
     getDisabledMode(overrides?: CallOverrides): Promise<BigNumber>;
 
     getExecution(
-      _selector: BytesLike,
+      _selector: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getLastDisabledTime(overrides?: CallOverrides): Promise<BigNumber>;
 
     "getNonce(uint192)"(
-      key: BigNumberish,
+      key: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     "getNonce()"(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      _defaultValidator: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isValidSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     setDefaultValidator(
-      _defaultValidator: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     setExecution(
-      _selector: BytesLike,
-      _executor: string,
-      _validator: string,
-      _validUntil: BigNumberish,
-      _validAfter: BigNumberish,
-      _enableData: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _selector: PromiseOrValue<BytesLike>,
+      _executor: PromiseOrValue<string>,
+      _validator: PromiseOrValue<string>,
+      _validUntil: PromiseOrValue<BigNumberish>,
+      _validAfter: PromiseOrValue<BigNumberish>,
+      _enableData: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     upgradeTo(
-      _newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      _newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     version(overrides?: CallOverrides): Promise<BigNumber>;
@@ -774,18 +815,18 @@ export interface Kernel extends BaseContract {
 
   populateTransaction: {
     disableMode(
-      _disableFlag: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _disableFlag: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     execute(
-      to: string,
-      value: BigNumberish,
-      data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      to: PromiseOrValue<string>,
+      value: PromiseOrValue<BigNumberish>,
+      data: PromiseOrValue<BytesLike>,
+      operation: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getDefaultValidator(
@@ -795,7 +836,7 @@ export interface Kernel extends BaseContract {
     getDisabledMode(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getExecution(
-      _selector: BytesLike,
+      _selector: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -804,78 +845,78 @@ export interface Kernel extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     "getNonce(uint192)"(
-      key: BigNumberish,
+      key: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     "getNonce()"(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
-      _defaultValidator: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isValidSignature(
-      hash: BytesLike,
-      signature: BytesLike,
+      hash: PromiseOrValue<BytesLike>,
+      signature: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish[],
-      arg3: BigNumberish[],
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>[],
+      arg3: PromiseOrValue<BigNumberish>[],
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     onERC1155Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BigNumberish,
-      arg4: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BigNumberish>,
+      arg4: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     onERC721Received(
-      arg0: string,
-      arg1: string,
-      arg2: BigNumberish,
-      arg3: BytesLike,
+      arg0: PromiseOrValue<string>,
+      arg1: PromiseOrValue<string>,
+      arg2: PromiseOrValue<BigNumberish>,
+      arg3: PromiseOrValue<BytesLike>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     setDefaultValidator(
-      _defaultValidator: string,
-      _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _defaultValidator: PromiseOrValue<string>,
+      _data: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     setExecution(
-      _selector: BytesLike,
-      _executor: string,
-      _validator: string,
-      _validUntil: BigNumberish,
-      _validAfter: BigNumberish,
-      _enableData: BytesLike,
-      overrides?: Overrides & { from?: string }
+      _selector: PromiseOrValue<BytesLike>,
+      _executor: PromiseOrValue<string>,
+      _validator: PromiseOrValue<string>,
+      _validUntil: PromiseOrValue<BigNumberish>,
+      _validAfter: PromiseOrValue<BigNumberish>,
+      _enableData: PromiseOrValue<BytesLike>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     upgradeTo(
-      _newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      _newImplementation: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     validateUserOp(
       userOp: UserOperationStruct,
-      userOpHash: BytesLike,
-      missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      userOpHash: PromiseOrValue<BytesLike>,
+      missingAccountFunds: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     version(overrides?: CallOverrides): Promise<PopulatedTransaction>;

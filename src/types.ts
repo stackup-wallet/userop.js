@@ -1,4 +1,5 @@
 import { BigNumberish, BytesLike } from "ethers";
+import { ConnectionInfo } from "ethers/lib/utils";
 import { UserOperationEventEvent } from "./typechain/EntryPoint";
 
 export interface IUserOperation {
@@ -107,7 +108,7 @@ export interface IPresetBuilderOpts {
   entryPoint?: string;
   factory?: string;
   paymasterMiddleware?: UserOperationMiddlewareFn;
-  overrideBundlerRpc?: string;
+  overrideBundlerRpc?: string | ConnectionInfo;
 }
 
 export interface ICall {

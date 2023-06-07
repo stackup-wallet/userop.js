@@ -16,6 +16,7 @@ import {
   SimpleAccount__factory,
 } from "../../typechain";
 import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
+import { ConnectionInfo } from "ethers/lib/utils";
 
 export class SimpleAccount extends UserOperationBuilder {
   private signer: ethers.Signer;
@@ -27,14 +28,14 @@ export class SimpleAccount extends UserOperationBuilder {
 
   private constructor(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrlOrConnectionInfo?: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ) {
     super();
     this.signer = signer;
-    this.provider = new BundlerJsonRpcProvider(rpcUrl).setBundlerRpc(
-      opts?.overrideBundlerRpc
-    );
+    this.provider = new BundlerJsonRpcProvider(
+      rpcUrlOrConnectionInfo
+    ).setBundlerRpc(opts?.overrideBundlerRpc);
     this.entryPoint = EntryPoint__factory.connect(
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider
@@ -57,10 +58,10 @@ export class SimpleAccount extends UserOperationBuilder {
 
   public static async init(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrlOrConnectionInfo?: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ): Promise<SimpleAccount> {
-    const instance = new SimpleAccount(signer, rpcUrl, opts);
+    const instance = new SimpleAccount(signer, rpcUrlOrConnectionInfo, opts);
 
     try {
       instance.initCode = await ethers.utils.hexConcat([
