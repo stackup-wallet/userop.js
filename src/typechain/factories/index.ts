@@ -9,3 +9,5 @@ export { KernelFactory__factory } from "./KernelFactory__factory";
 export { Multisend__factory } from "./Multisend__factory";
 export { SimpleAccount__factory } from "./SimpleAccount__factory";
 export { SimpleAccountFactory__factory } from "./SimpleAccountFactory__factory";
+export { SmartAccount__factory } from "./SmartAccount__factory";
+export { SmartAccountFactory__factory } from "./SmartAccountFactory__factory";
