@@ -1,6 +1,6 @@
 {
   "name": "userop",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A simple JS library for building ERC-4337 UserOperations.",
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
@@ -8,7 +8,7 @@
   "author": "stackup-wallet",
   "license": "MIT",
   "engines": {
-    "node": "^16 || ^17 || ^18"
+    "node": ">=14.0.0"
   },
   "scripts": {
     "clean": "rimraf dist",
