@@ -1,28 +1,29 @@
 import { ethers } from "ethers";
-import { ERC4337, Kernel as KernelConst } from "../../constants";
+import { ConnectionInfo } from "ethers/lib/utils";
 import { UserOperationBuilder } from "../../builder";
+import { ERC4337, Kernel as KernelConst } from "../../constants";
+import { Safe } from "../../constants/safe";
 import { BundlerJsonRpcProvider } from "../../provider";
 import {
-  EOASignature,
-  estimateUserOperationGas,
-  getGasPrice,
-} from "../middleware";
-import {
-  EntryPoint,
-  EntryPoint__factory,
   ECDSAKernelFactory,
   ECDSAKernelFactory__factory,
+  EntryPoint,
+  EntryPoint__factory,
   Kernel as KernelImpl,
   Kernel__factory,
   Multisend,
   Multisend__factory,
 } from "../../typechain";
 import {
-  IPresetBuilderOpts,
   ICall,
+  IPresetBuilderOpts,
   UserOperationMiddlewareFn,
 } from "../../types";
-import { Safe } from "../../constants/safe";
+import {
+  EOASignature,
+  estimateUserOperationGas,
+  getGasPrice,
+} from "../middleware";
 
 enum Operation {
   Call,
@@ -40,12 +41,12 @@ export class Kernel extends UserOperationBuilder {
 
   private constructor(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrlOrConnectionInfo: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ) {
     super();
     this.signer = signer;
-    this.provider = new BundlerJsonRpcProvider(rpcUrl).setBundlerRpc(
+    this.provider = new BundlerJsonRpcProvider(rpcUrlOrConnectionInfo).setBundlerRpc(
       opts?.overrideBundlerRpc
     );
     this.entryPoint = EntryPoint__factory.connect(
@@ -81,10 +82,10 @@ export class Kernel extends UserOperationBuilder {
 
   public static async init(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrlOrConnectionInfo: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ): Promise<Kernel> {
-    const instance = new Kernel(signer, rpcUrl, opts);
+    const instance = new Kernel(signer, rpcUrlOrConnectionInfo, opts);
 
     try {
       instance.initCode = await ethers.utils.hexConcat([

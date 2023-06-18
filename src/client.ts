@@ -1,15 +1,16 @@
 import { BigNumberish, ethers } from "ethers";
+import { ConnectionInfo } from "ethers/lib/utils";
+import { ERC4337 } from "./constants";
+import { UserOperationMiddlewareCtx } from "./context";
+import { BundlerJsonRpcProvider } from "./provider";
+import { EntryPoint, EntryPoint__factory } from "./typechain";
 import {
   IClient,
-  IUserOperationBuilder,
-  ISendUserOperationOpts,
   IClientOpts,
+  ISendUserOperationOpts,
+  IUserOperationBuilder,
 } from "./types";
-import { EntryPoint, EntryPoint__factory } from "./typechain";
 import { OpToJSON } from "./utils";
-import { UserOperationMiddlewareCtx } from "./context";
-import { ERC4337 } from "./constants";
-import { BundlerJsonRpcProvider } from "./provider";
 
 export class Client implements IClient {
   private provider: ethers.providers.JsonRpcProvider;
@@ -19,8 +20,8 @@ export class Client implements IClient {
   public waitTimeoutMs: number;
   public waitIntervalMs: number;
 
-  private constructor(rpcUrl: string, opts?: IClientOpts) {
-    this.provider = new BundlerJsonRpcProvider(rpcUrl).setBundlerRpc(
+  private constructor(rpcUrlOrConnectionInfo: string | ConnectionInfo, opts?: IClientOpts) {
+    this.provider = new BundlerJsonRpcProvider(rpcUrlOrConnectionInfo).setBundlerRpc(
       opts?.overrideBundlerRpc
     );
     this.entryPoint = EntryPoint__factory.connect(
@@ -32,8 +33,8 @@ export class Client implements IClient {
     this.waitIntervalMs = 5000;
   }
 
-  public static async init(rpcUrl: string, opts?: IClientOpts) {
-    const instance = new Client(rpcUrl, opts);
+  public static async init(rpcUrlOrConnectionInfo: string | ConnectionInfo, opts?: IClientOpts) {
+    const instance = new Client(rpcUrlOrConnectionInfo, opts);
     instance.chainId = await instance.provider
       .getNetwork()
       .then((network) => ethers.BigNumber.from(network.chainId));

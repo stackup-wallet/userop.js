@@ -1,12 +1,8 @@
 import { BigNumberish, BytesLike, ethers } from "ethers";
-import { ERC4337 } from "../../constants";
+import { ConnectionInfo } from "ethers/lib/utils";
 import { UserOperationBuilder } from "../../builder";
+import { ERC4337 } from "../../constants";
 import { BundlerJsonRpcProvider } from "../../provider";
-import {
-  EOASignature,
-  estimateUserOperationGas,
-  getGasPrice,
-} from "../middleware";
 import {
   EntryPoint,
   EntryPoint__factory,
@@ -16,6 +12,11 @@ import {
   SimpleAccount__factory,
 } from "../../typechain";
 import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
+import {
+  EOASignature,
+  estimateUserOperationGas,
+  getGasPrice,
+} from "../middleware";
 
 export class SimpleAccount extends UserOperationBuilder {
   private signer: ethers.Signer;
@@ -27,12 +28,12 @@ export class SimpleAccount extends UserOperationBuilder {
 
   private constructor(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrlOrConnectionInfo: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ) {
     super();
     this.signer = signer;
-    this.provider = new BundlerJsonRpcProvider(rpcUrl).setBundlerRpc(
+    this.provider = new BundlerJsonRpcProvider(rpcUrlOrConnectionInfo).setBundlerRpc(
       opts?.overrideBundlerRpc
     );
     this.entryPoint = EntryPoint__factory.connect(
@@ -57,10 +58,10 @@ export class SimpleAccount extends UserOperationBuilder {
 
   public static async init(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrlOrConnectionInfo: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ): Promise<SimpleAccount> {
-    const instance = new SimpleAccount(signer, rpcUrl, opts);
+    const instance = new SimpleAccount(signer, rpcUrlOrConnectionInfo, opts);
 
     try {
       instance.initCode = await ethers.utils.hexConcat([
