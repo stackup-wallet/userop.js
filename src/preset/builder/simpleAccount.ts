@@ -33,9 +33,9 @@ export class SimpleAccount extends UserOperationBuilder {
   ) {
     super();
     this.signer = signer;
-    this.provider = new BundlerJsonRpcProvider(rpcUrlOrConnectionInfo).setBundlerRpc(
-      opts?.overrideBundlerRpc
-    );
+    this.provider = new BundlerJsonRpcProvider(
+      rpcUrlOrConnectionInfo
+    ).setBundlerRpc(opts?.overrideBundlerRpc);
     this.entryPoint = EntryPoint__factory.connect(
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider

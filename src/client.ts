@@ -20,10 +20,13 @@ export class Client implements IClient {
   public waitTimeoutMs: number;
   public waitIntervalMs: number;
 
-  private constructor(rpcUrlOrConnectionInfo: string | ConnectionInfo, opts?: IClientOpts) {
-    this.provider = new BundlerJsonRpcProvider(rpcUrlOrConnectionInfo).setBundlerRpc(
-      opts?.overrideBundlerRpc
-    );
+  private constructor(
+    rpcUrlOrConnectionInfo: string | ConnectionInfo,
+    opts?: IClientOpts
+  ) {
+    this.provider = new BundlerJsonRpcProvider(
+      rpcUrlOrConnectionInfo
+    ).setBundlerRpc(opts?.overrideBundlerRpc);
     this.entryPoint = EntryPoint__factory.connect(
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider
@@ -33,7 +36,10 @@ export class Client implements IClient {
     this.waitIntervalMs = 5000;
   }
 
-  public static async init(rpcUrlOrConnectionInfo: string | ConnectionInfo, opts?: IClientOpts) {
+  public static async init(
+    rpcUrlOrConnectionInfo: string | ConnectionInfo,
+    opts?: IClientOpts
+  ) {
     const instance = new Client(rpcUrlOrConnectionInfo, opts);
     instance.chainId = await instance.provider
       .getNetwork()
