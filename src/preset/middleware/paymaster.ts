@@ -12,7 +12,10 @@ interface VerifyingPaymasterResult {
 
 // Assumes the paymaster interface in https://hackmd.io/@stackup/H1oIvV-qi
 export const verifyingPaymaster =
-  (paymasterRpc: string | ConnectionInfo, context: any): UserOperationMiddlewareFn =>
+  (
+    paymasterRpc: string | ConnectionInfo,
+    context: any
+  ): UserOperationMiddlewareFn =>
   async (ctx) => {
     ctx.op.verificationGasLimit = ethers.BigNumber.from(
       ctx.op.verificationGasLimit
