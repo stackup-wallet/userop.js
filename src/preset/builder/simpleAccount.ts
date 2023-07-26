@@ -52,7 +52,9 @@ export class SimpleAccount extends UserOperationBuilder {
 
   private resolveAccount: UserOperationMiddlewareFn = async (ctx) => {
     ctx.op.nonce = await this.entryPoint.getNonce(ctx.op.sender, 0);
-    ctx.op.initCode = ctx.op.nonce.eq(0) ? this.initCode : "0x";
+    const code = await this.provider.getCode(this.proxy.address)
+    const ifNotDeployed = code === "0x";
+    ctx.op.initCode = ifNotDeployed ? this.initCode : "0x";
   };
 
   public static async init(
