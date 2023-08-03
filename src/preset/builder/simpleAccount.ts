@@ -67,7 +67,7 @@ export class SimpleAccount extends UserOperationBuilder {
         instance.factory.address,
         instance.factory.interface.encodeFunctionData("createAccount", [
           await instance.signer.getAddress(),
-          ethers.BigNumber.from(0),
+          ethers.BigNumber.from(opts?.salt ?? 0),
         ]),
       ]);
       await instance.entryPoint.callStatic.getSenderAddress(instance.initCode);

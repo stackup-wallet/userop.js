@@ -106,6 +106,7 @@ export interface ISendUserOperationResponse {
 export interface IPresetBuilderOpts {
   entryPoint?: string;
   factory?: string;
+  salt?: BigNumberish;
   paymasterMiddleware?: UserOperationMiddlewareFn;
   overrideBundlerRpc?: string;
 }
