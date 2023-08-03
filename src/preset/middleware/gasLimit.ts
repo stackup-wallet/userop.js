@@ -4,8 +4,11 @@ import { UserOperationMiddlewareFn } from "../../types";
 
 interface GasEstimate {
   preVerificationGas: BigNumberish;
-  verificationGas: BigNumberish;
+  verificationGasLimit: BigNumberish;
   callGasLimit: BigNumberish;
+
+  // TODO: remove this with EntryPoint v0.7
+  verificationGas: BigNumberish;
 }
 
 const estimateCreationGas = async (
@@ -36,6 +39,7 @@ export const estimateUserOperationGas =
     ])) as GasEstimate;
 
     ctx.op.preVerificationGas = est.preVerificationGas;
-    ctx.op.verificationGasLimit = est.verificationGas;
+    ctx.op.verificationGasLimit =
+      est.verificationGasLimit ?? est.verificationGas;
     ctx.op.callGasLimit = est.callGasLimit;
   };
