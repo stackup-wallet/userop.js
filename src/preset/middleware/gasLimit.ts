@@ -15,6 +15,9 @@ const estimateCreationGas = async (
   provider: ethers.providers.JsonRpcProvider,
   initCode: BytesLike
 ): Promise<ethers.BigNumber> => {
+  if (initCode.length <= 20) {
+    return ethers.BigNumber.from(0);
+  }
   const initCodeHex = ethers.utils.hexlify(initCode);
   const factory = initCodeHex.substring(0, 42);
   const callData = "0x" + initCodeHex.substring(42);
