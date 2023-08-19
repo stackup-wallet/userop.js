@@ -10,8 +10,8 @@ import {
 import {
   EntryPoint,
   EntryPoint__factory,
-  ECDSAKernelFactory,
-  ECDSAKernelFactory__factory,
+  KernelFactory,
+  KernelFactory__factory,
   Kernel as KernelImpl,
   Kernel__factory,
   Multisend,
@@ -33,7 +33,7 @@ export class Kernel extends UserOperationBuilder {
   private signer: ethers.Signer;
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
-  private factory: ECDSAKernelFactory;
+  private factory: KernelFactory;
   private initCode: string;
   private multisend: Multisend;
   proxy: KernelImpl;
@@ -52,8 +52,8 @@ export class Kernel extends UserOperationBuilder {
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider
     );
-    this.factory = ECDSAKernelFactory__factory.connect(
-      opts?.factory || KernelConst.ECDSAFactory,
+    this.factory = KernelFactory__factory.connect(
+      opts?.factory || KernelConst.Factory,
       this.provider
     );
     this.initCode = "0x";
@@ -87,10 +87,17 @@ export class Kernel extends UserOperationBuilder {
     const instance = new Kernel(signer, rpcUrl, opts);
 
     try {
-      instance.initCode = await ethers.utils.hexConcat([
+      instance.initCode = ethers.utils.hexConcat([
         instance.factory.address,
         instance.factory.interface.encodeFunctionData("createAccount", [
-          await instance.signer.getAddress(),
+          KernelConst.KernelImpl,
+          instance.proxy.interface.encodeFunctionData(
+            "initialize",
+            [
+              KernelConst.ECDSAValidator,
+              await instance.signer.getAddress(),
+            ]
+          ),
           ethers.BigNumber.from(opts?.salt ?? 0),
         ]),
       ]);
