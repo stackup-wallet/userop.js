@@ -1,4 +1,5 @@
 import { ethers } from "ethers";
+import {ConnectionInfo} from "ethers/lib/utils";
 
 export class BundlerJsonRpcProvider extends ethers.providers.JsonRpcProvider {
   private bundlerRpc?: ethers.providers.JsonRpcProvider;
@@ -10,7 +11,7 @@ export class BundlerJsonRpcProvider extends ethers.providers.JsonRpcProvider {
     "eth_supportedEntryPoints",
   ]);
 
-  setBundlerRpc(bundlerRpc?: string): BundlerJsonRpcProvider {
+  setBundlerRpc(bundlerRpc?: string | ConnectionInfo): BundlerJsonRpcProvider {
     if (bundlerRpc) {
       this.bundlerRpc = new ethers.providers.JsonRpcProvider(bundlerRpc);
     }

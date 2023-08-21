@@ -16,6 +16,7 @@ import {
   SimpleAccount__factory,
 } from "../../typechain";
 import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
+import {ConnectionInfo} from "ethers/lib/utils";
 
 export class SimpleAccount extends UserOperationBuilder {
   private signer: ethers.Signer;
@@ -27,7 +28,7 @@ export class SimpleAccount extends UserOperationBuilder {
 
   private constructor(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrl: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ) {
     super();
@@ -57,7 +58,7 @@ export class SimpleAccount extends UserOperationBuilder {
 
   public static async init(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrl: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ): Promise<SimpleAccount> {
     const instance = new SimpleAccount(signer, rpcUrl, opts);

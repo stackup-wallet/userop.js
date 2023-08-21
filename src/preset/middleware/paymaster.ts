@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { UserOperationMiddlewareFn } from "../../types";
 import { OpToJSON } from "../../utils";
+import {ConnectionInfo} from "ethers/lib/utils";
 
 interface VerifyingPaymasterResult {
   paymasterAndData: string;
@@ -11,7 +12,7 @@ interface VerifyingPaymasterResult {
 
 // Assumes the paymaster interface in https://hackmd.io/@stackup/H1oIvV-qi
 export const verifyingPaymaster =
-  (paymasterRpc: string, context: any): UserOperationMiddlewareFn =>
+  (paymasterRpc: string | ConnectionInfo, context: any): UserOperationMiddlewareFn =>
   async (ctx) => {
     ctx.op.verificationGasLimit = ethers.BigNumber.from(
       ctx.op.verificationGasLimit

@@ -1,4 +1,5 @@
 import { BigNumberish, ethers } from "ethers";
+import { ConnectionInfo } from "ethers/lib/utils";
 import {
   IClient,
   IUserOperationBuilder,
@@ -19,7 +20,7 @@ export class Client implements IClient {
   public waitTimeoutMs: number;
   public waitIntervalMs: number;
 
-  private constructor(rpcUrl: string, opts?: IClientOpts) {
+  private constructor(rpcUrl: string | ConnectionInfo, opts?: IClientOpts) {
     this.provider = new BundlerJsonRpcProvider(rpcUrl).setBundlerRpc(
       opts?.overrideBundlerRpc
     );
@@ -32,7 +33,7 @@ export class Client implements IClient {
     this.waitIntervalMs = 5000;
   }
 
-  public static async init(rpcUrl: string, opts?: IClientOpts) {
+  public static async init(rpcUrl: string | ConnectionInfo, opts?: IClientOpts) {
     const instance = new Client(rpcUrl, opts);
     instance.chainId = await instance.provider
       .getNetwork()

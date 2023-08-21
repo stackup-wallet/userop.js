@@ -23,6 +23,7 @@ import {
   UserOperationMiddlewareFn,
 } from "../../types";
 import { Safe } from "../../constants/safe";
+import {ConnectionInfo} from "ethers/lib/utils";
 
 enum Operation {
   Call,
@@ -40,7 +41,7 @@ export class Kernel extends UserOperationBuilder {
 
   private constructor(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrl: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ) {
     super();
@@ -81,7 +82,7 @@ export class Kernel extends UserOperationBuilder {
 
   public static async init(
     signer: ethers.Signer,
-    rpcUrl: string,
+    rpcUrl: string | ConnectionInfo,
     opts?: IPresetBuilderOpts
   ): Promise<Kernel> {
     const instance = new Kernel(signer, rpcUrl, opts);
