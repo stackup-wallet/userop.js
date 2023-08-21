@@ -106,3 +106,6 @@ dist
 # local package
 local/*
 !local/package.json
+
+# WebStorm
+.idea
