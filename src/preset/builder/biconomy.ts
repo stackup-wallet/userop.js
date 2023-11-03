@@ -62,6 +62,13 @@ import { EOASignature, estimateUserOperationGas, getGasPrice } from "../middlewa
       ctx.op.initCode = ctx.op.nonce.eq(0) ? this.initCode : "0x";
     };
 
+    private moduleSignature: UserOperationMiddlewareFn = async (ctx) => {
+      ctx.op.signature = ethers.utils.defaultAbiCoder.encode(
+        ["bytes", "address"],
+        [ctx.op.signature, BiconomyConst.ECDSAOwnershipRegistryModule]
+      );
+    };
+
     public static async init(
       signer: ethers.Signer,
       rpcUrl: string,
@@ -86,11 +93,12 @@ import { EOASignature, estimateUserOperationGas, getGasPrice } from "../middlewa
   
         throw new Error("getSenderAddress: unexpected result");
       } catch (error: any) {
-        const addr = error?.errorArgs?.sender;
-        if (!addr) throw error;
+        // Review
+        // const addr = error?.errorArgs?.sender;
+        // if (!addr) throw error;
   
-        // in case of not throwing error
-        // const addr = await instance.factory.getAddressForCounterFactualAccount(BiconomyConst.ECDSAOwnershipRegistryModule, moduleSetupData, ethers.BigNumber.from(opts?.salt ?? 0))
+        // in case of not throwing error (check for AA13 initcode failed or OOG)
+        const addr = await instance.factory.getAddressForCounterFactualAccount(BiconomyConst.ECDSAOwnershipRegistryModule, moduleSetupData, ethers.BigNumber.from(opts?.salt ?? 0))
         instance.proxy = SmartAccount__factory.connect(addr, instance.provider);
       }
 
@@ -112,6 +120,7 @@ import { EOASignature, estimateUserOperationGas, getGasPrice } from "../middlewa
   
       return withPM
         .useMiddleware(EOASignature(instance.signer))
+        .useMiddleware(instance.moduleSignature);
     }
 
     execute(call: ICall) {
