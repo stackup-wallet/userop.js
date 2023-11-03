@@ -3,9 +3,13 @@
 /* eslint-disable */
 export { ECDSAKernelFactory__factory } from "./ECDSAKernelFactory__factory";
 export { ECDSAValidator__factory } from "./ECDSAValidator__factory";
+export { EcdsaOwnershipRegistryModule__factory } from "./EcdsaOwnershipRegistryModule__factory";
 export { EntryPoint__factory } from "./EntryPoint__factory";
+export { IEcdsaOwnershipRegistryModule__factory } from "./IEcdsaOwnershipRegistryModule__factory";
 export { Kernel__factory } from "./Kernel__factory";
 export { KernelFactory__factory } from "./KernelFactory__factory";
 export { Multisend__factory } from "./Multisend__factory";
 export { SimpleAccount__factory } from "./SimpleAccount__factory";
 export { SimpleAccountFactory__factory } from "./SimpleAccountFactory__factory";
+export { SmartAccount__factory } from "./SmartAccount__factory";
+export { SmartAccountFactory__factory } from "./SmartAccountFactory__factory";
