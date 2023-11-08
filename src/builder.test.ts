@@ -7,8 +7,8 @@ import {
   DEFAULT_PRE_VERIFICATION_GAS,
   DEFAULT_USER_OP,
   UserOperationMiddlewareFn,
-} from "../src";
-import { OpToJSON } from "../src/utils";
+} from ".";
+import { OpToJSON } from "./utils";
 
 const MOCK_BYTES_1 = "0xdead";
 const MOCK_BYTES_2 = "0xbeef";

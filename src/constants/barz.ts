@@ -1,0 +1,6 @@
+export const Barz = {
+  Factory: "0xd984E461185CE4C155dae5B86Df260ff7EE23431",
+  Secp256r1VerificationFacet: "0x5816fE7500DAE630D756a2aABeb29A4609EC6D0b",
+  AccountFacet: "0xaa25B34558F66246A7F23050A14F386F1316963C",
+  DefaultFallbackHandler: "0xa0bb5bf7Eb7dC7AA001F4Ec6271e543CE31374Fc",
+};

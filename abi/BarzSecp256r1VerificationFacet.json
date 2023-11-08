@@ -1,0 +1,251 @@
+{
+  "abi": [
+    { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+    {
+      "inputs": [],
+      "name": "LibAppStorage__AccountMustBeUninitialized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "LibAppStorage__SignerAlreadyUninitialized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "LibAppStorage__SignerMustBeUninitialized",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Secp256r1VerificationFacet__InvalidSignerLength",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VerificationFacet__InitializationFailure",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VerificationFacet__InvalidFacetMapping",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VerificationFacet__ValidateOwnerSignatureSelectorAlreadySet",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VerificationFacet__ValidateOwnerSignatureSelectorNotSet",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "SignerInitialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "SignerUninitialized",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes", "name": "_publicKey", "type": "bytes" }
+      ],
+      "name": "initializeSigner",
+      "outputs": [
+        { "internalType": "uint256", "name": "initSuccess", "type": "uint256" }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes", "name": "_publicKey", "type": "bytes" }
+      ],
+      "name": "isValidKeyType",
+      "outputs": [
+        { "internalType": "bool", "name": "isValid", "type": "bool" }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "_hash", "type": "bytes32" },
+        { "internalType": "bytes", "name": "_signature", "type": "bytes" }
+      ],
+      "name": "isValidSignature",
+      "outputs": [
+        { "internalType": "bytes4", "name": "magicValue", "type": "bytes4" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        { "internalType": "bytes", "name": "signer", "type": "bytes" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "self",
+      "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "uninitializeSigner",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "uninitSuccess",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            { "internalType": "address", "name": "sender", "type": "address" },
+            { "internalType": "uint256", "name": "nonce", "type": "uint256" },
+            { "internalType": "bytes", "name": "initCode", "type": "bytes" },
+            { "internalType": "bytes", "name": "callData", "type": "bytes" },
+            {
+              "internalType": "uint256",
+              "name": "callGasLimit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "verificationGasLimit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "preVerificationGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxFeePerGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxPriorityFeePerGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "paymasterAndData",
+              "type": "bytes"
+            },
+            { "internalType": "bytes", "name": "signature", "type": "bytes" }
+          ],
+          "internalType": "struct UserOperation",
+          "name": "userOp",
+          "type": "tuple"
+        },
+        { "internalType": "bytes32", "name": "userOpHash", "type": "bytes32" }
+      ],
+      "name": "validateOwnerSignature",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "validationData",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "validateOwnerSignatureSelector",
+      "outputs": [
+        {
+          "internalType": "bytes4",
+          "name": "ownerSignatureValidatorSelector",
+          "type": "bytes4"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            { "internalType": "address", "name": "sender", "type": "address" },
+            { "internalType": "uint256", "name": "nonce", "type": "uint256" },
+            { "internalType": "bytes", "name": "initCode", "type": "bytes" },
+            { "internalType": "bytes", "name": "callData", "type": "bytes" },
+            {
+              "internalType": "uint256",
+              "name": "callGasLimit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "verificationGasLimit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "preVerificationGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxFeePerGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxPriorityFeePerGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "paymasterAndData",
+              "type": "bytes"
+            },
+            { "internalType": "bytes", "name": "signature", "type": "bytes" }
+          ],
+          "internalType": "struct UserOperation",
+          "name": "userOp",
+          "type": "tuple"
+        },
+        { "internalType": "bytes32", "name": "userOpHash", "type": "bytes32" },
+        { "internalType": "uint256[2]", "name": "q", "type": "uint256[2]" }
+      ],
+      "name": "validateSignature",
+      "outputs": [
+        { "internalType": "uint256", "name": "isValid", "type": "uint256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
