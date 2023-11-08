@@ -1,0 +1,156 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_diamondCutFacet",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_accountFacet",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_tokenReceiverFacet",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_diamondLoupeFacet",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "payable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_initializationContractAddress",
+          "type": "address"
+        },
+        { "internalType": "bytes", "name": "_calldata", "type": "bytes" }
+      ],
+      "name": "InitializationFunctionReverted",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "facetAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "enum IDiamondCut.FacetCutAction",
+              "name": "action",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes4[]",
+              "name": "functionSelectors",
+              "type": "bytes4[]"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct IDiamondCut.FacetCut[]",
+          "name": "_diamondCut",
+          "type": "tuple[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_init",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "_calldata",
+          "type": "bytes"
+        }
+      ],
+      "name": "DiamondCut",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "_functionSelector",
+          "type": "bytes4"
+        }
+      ],
+      "name": "facetAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "facetAddress_",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "facetAddresses",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "facetAddresses_",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_facet", "type": "address" }
+      ],
+      "name": "facetFunctionSelectors",
+      "outputs": [
+        {
+          "internalType": "bytes4[]",
+          "name": "facetFunctionSelectors_",
+          "type": "bytes4[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "facets",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "facetAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes4[]",
+              "name": "functionSelectors",
+              "type": "bytes4[]"
+            }
+          ],
+          "internalType": "struct IDiamondLoupe.Facet[]",
+          "name": "facets_",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

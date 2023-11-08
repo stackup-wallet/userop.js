@@ -1,4 +1,4 @@
-import { BigNumberish, BytesLike } from "ethers";
+import { BigNumberish, BytesLike, ethers } from "ethers";
 import { UserOperationEventEvent } from "./typechain/EntryPoint";
 
 export interface IUserOperation {
@@ -110,6 +110,9 @@ export interface IPresetBuilderOpts {
   paymasterMiddleware?: UserOperationMiddlewareFn;
   overrideBundlerRpc?: string;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ISigner extends Pick<ethers.Signer, "signMessage"> {}
 
 export interface ICall {
   to: string;

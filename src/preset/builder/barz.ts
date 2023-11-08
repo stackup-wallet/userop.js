@@ -1,5 +1,5 @@
 import { BigNumberish, BytesLike, ethers } from "ethers";
-import { ERC4337 } from "../../constants";
+import { ERC4337, Barz as BarzConst } from "../../constants";
 import { UserOperationBuilder } from "../../builder";
 import { BundlerJsonRpcProvider } from "../../provider";
 import {
@@ -7,26 +7,27 @@ import {
   estimateUserOperationGas,
   getGasPrice,
 } from "../middleware";
+import { BarzSecp256r1 } from "../signers";
 import {
   EntryPoint,
   EntryPoint__factory,
-  SimpleAccountFactory,
-  SimpleAccountFactory__factory,
-  SimpleAccount as SimpleAccountImpl,
-  SimpleAccount__factory,
+  BarzFactory,
+  BarzFactory__factory,
+  BarzAccountFacet,
+  BarzAccountFacet__factory,
 } from "../../typechain";
 import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
 
-export class SimpleAccount extends UserOperationBuilder {
-  private signer: ethers.Signer;
+export class Barz extends UserOperationBuilder {
+  private signer: BarzSecp256r1;
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
-  private factory: SimpleAccountFactory;
+  private factory: BarzFactory;
   private initCode: string;
-  proxy: SimpleAccountImpl;
+  proxy: BarzAccountFacet;
 
   private constructor(
-    signer: ethers.Signer,
+    signer: BarzSecp256r1,
     rpcUrl: string,
     opts?: IPresetBuilderOpts
   ) {
@@ -39,12 +40,12 @@ export class SimpleAccount extends UserOperationBuilder {
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider
     );
-    this.factory = SimpleAccountFactory__factory.connect(
-      opts?.factory || ERC4337.SimpleAccount.Factory,
+    this.factory = BarzFactory__factory.connect(
+      opts?.factory || BarzConst.Factory,
       this.provider
     );
     this.initCode = "0x";
-    this.proxy = SimpleAccount__factory.connect(
+    this.proxy = BarzAccountFacet__factory.connect(
       ethers.constants.AddressZero,
       this.provider
     );
@@ -56,17 +57,18 @@ export class SimpleAccount extends UserOperationBuilder {
   };
 
   public static async init(
-    signer: ethers.Signer,
+    signer: BarzSecp256r1,
     rpcUrl: string,
     opts?: IPresetBuilderOpts
-  ): Promise<SimpleAccount> {
-    const instance = new SimpleAccount(signer, rpcUrl, opts);
+  ): Promise<Barz> {
+    const instance = new Barz(signer, rpcUrl, opts);
 
     try {
       instance.initCode = await ethers.utils.hexConcat([
         instance.factory.address,
         instance.factory.interface.encodeFunctionData("createAccount", [
-          await instance.signer.getAddress(),
+          BarzConst.Secp256r1VerificationFacet,
+          await instance.signer.getPublicKey(),
           ethers.BigNumber.from(opts?.salt ?? 0),
         ]),
       ]);
@@ -77,7 +79,10 @@ export class SimpleAccount extends UserOperationBuilder {
       const addr = error?.errorArgs?.sender;
       if (!addr) throw error;
 
-      instance.proxy = SimpleAccount__factory.connect(addr, instance.provider);
+      instance.proxy = BarzAccountFacet__factory.connect(
+        addr,
+        instance.provider
+      );
     }
 
     const base = instance
@@ -103,9 +108,13 @@ export class SimpleAccount extends UserOperationBuilder {
     );
   }
 
-  executeBatch(to: Array<string>, data: Array<BytesLike>) {
+  executeBatch(
+    to: Array<string>,
+    value: Array<BigNumberish>,
+    data: Array<BytesLike>
+  ) {
     return this.setCallData(
-      this.proxy.interface.encodeFunctionData("executeBatch", [to, data])
+      this.proxy.interface.encodeFunctionData("executeBatch", [to, value, data])
     );
   }
 }

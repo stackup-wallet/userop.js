@@ -1,0 +1,264 @@
+{
+  "abi": [
+    { "inputs": [], "stateMutability": "nonpayable", "type": "constructor" },
+    {
+      "inputs": [],
+      "name": "AccountFacet__CallNotSuccessful",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AccountFacet__InitializationFailure",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AccountFacet__NonExistentVerificationFacet",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "AccountFacet__RestrictionsFailure",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_initializationContractAddress",
+          "type": "address"
+        },
+        { "internalType": "bytes", "name": "_calldata", "type": "bytes" }
+      ],
+      "name": "InitializationFunctionReverted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "LibAppStorage__AccountMustBeUninitialized",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IEntryPoint",
+          "name": "entryPoint",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes",
+          "name": "ownerPublicKey",
+          "type": "bytes"
+        }
+      ],
+      "name": "AccountInitialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "facetAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "enum IDiamondCut.FacetCutAction",
+              "name": "action",
+              "type": "uint8"
+            },
+            {
+              "internalType": "bytes4[]",
+              "name": "functionSelectors",
+              "type": "bytes4[]"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct IDiamondCut.FacetCut[]",
+          "name": "_diamondCut",
+          "type": "tuple[]"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_init",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "_calldata",
+          "type": "bytes"
+        }
+      ],
+      "name": "DiamondCut",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "VerificationFailure",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "VerificationSuccess",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "entryPoint",
+      "outputs": [
+        {
+          "internalType": "contract IEntryPoint",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address", "name": "_dest", "type": "address" },
+        { "internalType": "uint256", "name": "_value", "type": "uint256" },
+        { "internalType": "bytes", "name": "_func", "type": "bytes" }
+      ],
+      "name": "execute",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "address[]", "name": "_dest", "type": "address[]" },
+        { "internalType": "uint256[]", "name": "_value", "type": "uint256[]" },
+        { "internalType": "bytes[]", "name": "_func", "type": "bytes[]" }
+      ],
+      "name": "executeBatch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getNonce",
+      "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_verificationFacet",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_anEntryPoint",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_facetRegistry",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_defaultFallBackHandler",
+          "type": "address"
+        },
+        { "internalType": "bytes", "name": "_ownerPublicKey", "type": "bytes" }
+      ],
+      "name": "initialize",
+      "outputs": [
+        { "internalType": "uint256", "name": "initSuccess", "type": "uint256" }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            { "internalType": "address", "name": "sender", "type": "address" },
+            { "internalType": "uint256", "name": "nonce", "type": "uint256" },
+            { "internalType": "bytes", "name": "initCode", "type": "bytes" },
+            { "internalType": "bytes", "name": "callData", "type": "bytes" },
+            {
+              "internalType": "uint256",
+              "name": "callGasLimit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "verificationGasLimit",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "preVerificationGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxFeePerGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "maxPriorityFeePerGas",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "paymasterAndData",
+              "type": "bytes"
+            },
+            { "internalType": "bytes", "name": "signature", "type": "bytes" }
+          ],
+          "internalType": "struct UserOperation",
+          "name": "userOp",
+          "type": "tuple"
+        },
+        { "internalType": "bytes32", "name": "userOpHash", "type": "bytes32" },
+        {
+          "internalType": "uint256",
+          "name": "missingAccountFunds",
+          "type": "uint256"
+        }
+      ],
+      "name": "validateUserOp",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "validationData",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
+}

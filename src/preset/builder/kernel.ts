@@ -3,7 +3,7 @@ import { ERC4337, Kernel as KernelConst } from "../../constants";
 import { UserOperationBuilder } from "../../builder";
 import { BundlerJsonRpcProvider } from "../../provider";
 import {
-  EOASignature,
+  signUserOpHash,
   estimateUserOperationGas,
   getGasPrice,
 } from "../middleware";
@@ -129,7 +129,7 @@ export class Kernel extends UserOperationBuilder {
       : base.useMiddleware(estimateUserOperationGas(instance.provider));
 
     return withPM
-      .useMiddleware(EOASignature(instance.signer))
+      .useMiddleware(signUserOpHash(instance.signer))
       .useMiddleware(instance.sudoMode);
   }
 

@@ -8,3 +8,4 @@ dist
 LICENSE
 yarn.lock
 patches
+src/typechain
