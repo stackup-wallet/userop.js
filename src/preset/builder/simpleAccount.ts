@@ -23,6 +23,7 @@ export class SimpleAccount extends UserOperationBuilder {
   private entryPoint: EntryPoint;
   private factory: SimpleAccountFactory;
   private initCode: string;
+  private nonceKey: number;
   proxy: SimpleAccountImpl;
 
   private constructor(
@@ -44,6 +45,7 @@ export class SimpleAccount extends UserOperationBuilder {
       this.provider
     );
     this.initCode = "0x";
+    this.nonceKey = opts?.nonceKey || 0;
     this.proxy = SimpleAccount__factory.connect(
       ethers.constants.AddressZero,
       this.provider
@@ -51,7 +53,7 @@ export class SimpleAccount extends UserOperationBuilder {
   }
 
   private resolveAccount: UserOperationMiddlewareFn = async (ctx) => {
-    ctx.op.nonce = await this.entryPoint.getNonce(ctx.op.sender, 0);
+    ctx.op.nonce = await this.entryPoint.getNonce(ctx.op.sender, this.nonceKey);
     ctx.op.initCode = ctx.op.nonce.eq(0) ? this.initCode : "0x";
   };
 
