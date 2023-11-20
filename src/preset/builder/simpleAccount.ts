@@ -53,8 +53,12 @@ export class SimpleAccount extends UserOperationBuilder {
   }
 
   private resolveAccount: UserOperationMiddlewareFn = async (ctx) => {
-    ctx.op.nonce = await this.entryPoint.getNonce(ctx.op.sender, this.nonceKey);
-    ctx.op.initCode = ctx.op.nonce.eq(0) ? this.initCode : "0x";
+    const [nonce, code] = await Promise.all([
+      this.entryPoint.getNonce(ctx.op.sender, this.nonceKey),
+      this.provider.getCode(ctx.op.sender),
+    ]);
+    ctx.op.nonce = nonce;
+    ctx.op.initCode = code === "0x" ? this.initCode : "0x";
   };
 
   public static async init(
