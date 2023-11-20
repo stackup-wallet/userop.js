@@ -107,6 +107,7 @@ export interface IPresetBuilderOpts {
   entryPoint?: string;
   factory?: string;
   salt?: BigNumberish;
+  nonceKey?: number;
   paymasterMiddleware?: UserOperationMiddlewareFn;
   overrideBundlerRpc?: string;
 }
