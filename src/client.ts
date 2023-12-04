@@ -1,17 +1,13 @@
 import { BigNumberish, ethers } from "ethers";
-import {
-  IClient,
-  IUserOperationBuilder,
-  ISendUserOperationOpts,
-  IClientOpts,
-} from "./types";
+import { UserOperationBuilder } from "./builder";
+import { ISendUserOperationOpts, IClientOpts, StateOverrideSet } from "./types";
 import { EntryPoint, EntryPoint__factory } from "./typechain";
 import { OpToJSON } from "./utils";
 import { UserOperationMiddlewareCtx } from "./context";
 import { ERC4337 } from "./constants";
 import { BundlerJsonRpcProvider } from "./provider";
 
-export class Client implements IClient {
+export class Client {
   private provider: ethers.providers.JsonRpcProvider;
 
   public entryPoint: EntryPoint;
@@ -41,16 +37,23 @@ export class Client implements IClient {
     return instance;
   }
 
-  async buildUserOperation(builder: IUserOperationBuilder) {
-    return builder.buildOp(this.entryPoint.address, this.chainId);
+  async buildUserOperation(
+    builder: UserOperationBuilder,
+    stateOverrides?: StateOverrideSet
+  ) {
+    return builder.buildOp(
+      this.entryPoint.address,
+      this.chainId,
+      stateOverrides
+    );
   }
 
   async sendUserOperation(
-    builder: IUserOperationBuilder,
+    builder: UserOperationBuilder,
     opts?: ISendUserOperationOpts
   ) {
     const dryRun = Boolean(opts?.dryRun);
-    const op = await this.buildUserOperation(builder);
+    const op = await this.buildUserOperation(builder, opts?.stateOverrides);
     opts?.onBuild?.(op);
 
     const userOpHash = dryRun
