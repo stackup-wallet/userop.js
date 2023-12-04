@@ -1,6 +1,5 @@
 import { BigNumberish, ethers } from "ethers";
 import {
-  IClient,
   IUserOperationBuilder,
   ISendUserOperationOpts,
   IClientOpts,
@@ -12,7 +11,7 @@ import { UserOperationMiddlewareCtx } from "./context";
 import { ERC4337 } from "./constants";
 import { BundlerJsonRpcProvider } from "./provider";
 
-export class Client implements IClient {
+export class Client {
   private provider: ethers.providers.JsonRpcProvider;
 
   public entryPoint: EntryPoint;

@@ -89,17 +89,6 @@ export interface IUserOperationMiddlewareCtx {
   getUserOpHash: () => string;
 }
 
-export interface IClient {
-  sendUserOperation: (
-    builder: IUserOperationBuilder,
-    opts?: ISendUserOperationOpts
-  ) => Promise<ISendUserOperationResponse>;
-
-  buildUserOperation: (
-    builder: IUserOperationBuilder
-  ) => Promise<IUserOperation>;
-}
-
 export interface IClientOpts {
   entryPoint?: string;
   overrideBundlerRpc?: string;
