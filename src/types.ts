@@ -1,6 +1,16 @@
 import { BigNumberish, BytesLike, ethers } from "ethers";
 import { UserOperationEventEvent } from "./typechain/EntryPoint";
 
+export interface ISateOverrideAccount {
+  nonce: BigNumberish;
+  code: BytesLike;
+  balance: BigNumberish;
+  state: Record<string, BytesLike>;
+  stateDiff: Record<string, BytesLike>;
+}
+
+export type StateOverrideSet = Record<string, Partial<ISateOverrideAccount>>;
+
 export interface IUserOperation {
   sender: string;
   nonce: BigNumberish;
@@ -64,16 +74,6 @@ export interface IUserOperationBuilder {
   // Will reset all fields back to default value.
   resetOp: () => IUserOperationBuilder;
 }
-
-export interface ISateOverrideAccount {
-  nonce: BigNumberish;
-  code: BytesLike;
-  balance: BigNumberish;
-  state: Record<string, BytesLike>;
-  stateDiff: Record<string, BytesLike>;
-}
-
-export type StateOverrideSet = Record<string, Partial<ISateOverrideAccount>>;
 
 export type UserOperationMiddlewareFn = (
   context: IUserOperationMiddlewareCtx
