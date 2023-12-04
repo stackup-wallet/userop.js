@@ -27,6 +27,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "AccountFacet__InvalidArrayLength",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "AccountFacet__NonExistentVerificationFacet",
     type: "error",
   },
