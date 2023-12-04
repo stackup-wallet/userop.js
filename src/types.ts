@@ -57,12 +57,23 @@ export interface IUserOperationBuilder {
   // It will run through your entire middleware stack in the process.
   buildOp: (
     entryPoint: string,
-    chainId: BigNumberish
+    chainId: BigNumberish,
+    stateOverrides?: StateOverrideSet
   ) => Promise<IUserOperation>;
 
   // Will reset all fields back to default value.
   resetOp: () => IUserOperationBuilder;
 }
+
+export interface ISateOverrideAccount {
+  nonce: BigNumberish;
+  code: BytesLike;
+  balance: BigNumberish;
+  state: Record<string, BytesLike>;
+  stateDiff: Record<string, BytesLike>;
+}
+
+export type StateOverrideSet = Record<string, Partial<ISateOverrideAccount>>;
 
 export type UserOperationMiddlewareFn = (
   context: IUserOperationMiddlewareCtx
@@ -72,6 +83,7 @@ export interface IUserOperationMiddlewareCtx {
   op: IUserOperation;
   entryPoint: string;
   chainId: BigNumberish;
+  stateOverrides?: StateOverrideSet;
 
   // A userOpHash is a unique hash of op + entryPoint + chainId.
   getUserOpHash: () => string;
@@ -96,6 +108,7 @@ export interface IClientOpts {
 export interface ISendUserOperationOpts {
   dryRun?: boolean;
   onBuild?: (op: IUserOperation) => Promise<any> | any;
+  stateOverrides?: StateOverrideSet;
 }
 
 export interface ISendUserOperationResponse {

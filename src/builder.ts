@@ -4,6 +4,7 @@ import { UserOperationMiddlewareCtx } from "./context";
 import {
   IUserOperation,
   IUserOperationBuilder,
+  StateOverrideSet,
   UserOperationMiddlewareFn,
 } from "./types";
 
@@ -197,11 +198,16 @@ export class UserOperationBuilder implements IUserOperationBuilder {
     return this;
   }
 
-  async buildOp(entryPoint: string, chainId: BigNumberish) {
+  async buildOp(
+    entryPoint: string,
+    chainId: BigNumberish,
+    stateOverrides?: StateOverrideSet
+  ) {
     const ctx = new UserOperationMiddlewareCtx(
       this.currOp,
       entryPoint,
-      chainId
+      chainId,
+      stateOverrides
     );
 
     for (const fn of this.middlewareStack) {

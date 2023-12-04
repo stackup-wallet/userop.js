@@ -14,10 +14,14 @@ interface GasEstimate {
 export const estimateUserOperationGas =
   (provider: ethers.providers.JsonRpcProvider): UserOperationMiddlewareFn =>
   async (ctx) => {
-    const est = (await provider.send("eth_estimateUserOperationGas", [
-      OpToJSON(ctx.op),
-      ctx.entryPoint,
-    ])) as GasEstimate;
+    const params =
+      ctx.stateOverrides !== undefined
+        ? [OpToJSON(ctx.op), ctx.entryPoint, ctx.stateOverrides]
+        : [OpToJSON(ctx.op), ctx.entryPoint];
+    const est = (await provider.send(
+      "eth_estimateUserOperationGas",
+      params
+    )) as GasEstimate;
 
     ctx.op.preVerificationGas = est.preVerificationGas;
     ctx.op.verificationGasLimit =

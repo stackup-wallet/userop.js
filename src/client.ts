@@ -4,6 +4,7 @@ import {
   IUserOperationBuilder,
   ISendUserOperationOpts,
   IClientOpts,
+  StateOverrideSet,
 } from "./types";
 import { EntryPoint, EntryPoint__factory } from "./typechain";
 import { OpToJSON } from "./utils";
@@ -41,8 +42,15 @@ export class Client implements IClient {
     return instance;
   }
 
-  async buildUserOperation(builder: IUserOperationBuilder) {
-    return builder.buildOp(this.entryPoint.address, this.chainId);
+  async buildUserOperation(
+    builder: IUserOperationBuilder,
+    stateOverrides?: StateOverrideSet
+  ) {
+    return builder.buildOp(
+      this.entryPoint.address,
+      this.chainId,
+      stateOverrides
+    );
   }
 
   async sendUserOperation(
@@ -50,7 +58,7 @@ export class Client implements IClient {
     opts?: ISendUserOperationOpts
   ) {
     const dryRun = Boolean(opts?.dryRun);
-    const op = await this.buildUserOperation(builder);
+    const op = await this.buildUserOperation(builder, opts?.stateOverrides);
     opts?.onBuild?.(op);
 
     const userOpHash = dryRun
