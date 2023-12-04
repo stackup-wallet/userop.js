@@ -1,10 +1,6 @@
 import { BigNumberish, ethers } from "ethers";
-import {
-  IUserOperationBuilder,
-  ISendUserOperationOpts,
-  IClientOpts,
-  StateOverrideSet,
-} from "./types";
+import { UserOperationBuilder } from "./builder";
+import { ISendUserOperationOpts, IClientOpts, StateOverrideSet } from "./types";
 import { EntryPoint, EntryPoint__factory } from "./typechain";
 import { OpToJSON } from "./utils";
 import { UserOperationMiddlewareCtx } from "./context";
@@ -42,7 +38,7 @@ export class Client {
   }
 
   async buildUserOperation(
-    builder: IUserOperationBuilder,
+    builder: UserOperationBuilder,
     stateOverrides?: StateOverrideSet
   ) {
     return builder.buildOp(
@@ -53,7 +49,7 @@ export class Client {
   }
 
   async sendUserOperation(
-    builder: IUserOperationBuilder,
+    builder: UserOperationBuilder,
     opts?: ISendUserOperationOpts
   ) {
     const dryRun = Boolean(opts?.dryRun);

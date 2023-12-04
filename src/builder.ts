@@ -3,7 +3,6 @@ import { OpToJSON } from "./utils";
 import { UserOperationMiddlewareCtx } from "./context";
 import {
   IUserOperation,
-  IUserOperationBuilder,
   StateOverrideSet,
   UserOperationMiddlewareFn,
 } from "./types";
@@ -26,7 +25,7 @@ export const DEFAULT_USER_OP: IUserOperation = {
   signature: ethers.utils.hexlify("0x"),
 };
 
-export class UserOperationBuilder implements IUserOperationBuilder {
+export class UserOperationBuilder {
   private defaultOp: IUserOperation;
   private currOp: IUserOperation;
   private middlewareStack: Array<UserOperationMiddlewareFn>;
