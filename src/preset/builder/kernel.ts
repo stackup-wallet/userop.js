@@ -10,32 +10,24 @@ import {
 import {
   EntryPoint,
   EntryPoint__factory,
-  ECDSAKernelFactory,
-  ECDSAKernelFactory__factory,
+  KernelFactory,
+  KernelFactory__factory,
   Kernel as KernelImpl,
   Kernel__factory,
-  Multisend,
-  Multisend__factory,
 } from "../../typechain";
 import {
   IPresetBuilderOpts,
   ICall,
   UserOperationMiddlewareFn,
 } from "../../types";
-import { Safe } from "../../constants/safe";
 
-enum Operation {
-  Call,
-  DelegateCall,
-}
 
 export class Kernel extends UserOperationBuilder {
   private signer: ethers.Signer;
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
-  private factory: ECDSAKernelFactory;
+  private factory: KernelFactory;
   private initCode: string;
-  private multisend: Multisend;
   proxy: KernelImpl;
 
   private constructor(
@@ -52,15 +44,11 @@ export class Kernel extends UserOperationBuilder {
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider
     );
-    this.factory = ECDSAKernelFactory__factory.connect(
-      opts?.factory || KernelConst.ECDSAFactory,
+    this.factory = KernelFactory__factory.connect(
+      opts?.factory || KernelConst.KernelFactory,
       this.provider
     );
     this.initCode = "0x";
-    this.multisend = Multisend__factory.connect(
-      ethers.constants.AddressZero,
-      this.provider
-    );
     this.proxy = Kernel__factory.connect(
       ethers.constants.AddressZero,
       this.provider
@@ -87,11 +75,17 @@ export class Kernel extends UserOperationBuilder {
     const instance = new Kernel(signer, rpcUrl, opts);
 
     try {
+    const _data = instance.proxy.interface.encodeFunctionData("initialize", [
+      KernelConst.ECDSAValidator, await signer.getAddress()
+    ]);      
+    const _index = opts?.salt || 0;
+
       instance.initCode = await ethers.utils.hexConcat([
         instance.factory.address,
         instance.factory.interface.encodeFunctionData("createAccount", [
-          await instance.signer.getAddress(),
-          ethers.BigNumber.from(opts?.salt ?? 0),
+          KernelConst.Kernel,
+          _data,
+          _index,
         ]),
       ]);
       await instance.entryPoint.callStatic.getSenderAddress(instance.initCode);
@@ -102,12 +96,6 @@ export class Kernel extends UserOperationBuilder {
       if (!addr) throw error;
 
       const chain = await instance.provider.getNetwork().then((n) => n.chainId);
-      const ms = Safe.MultiSend[chain.toString()];
-      if (!ms)
-        throw new Error(
-          `Multisend contract not deployed on network: ${chain.toString()}`
-        );
-      instance.multisend = Multisend__factory.connect(ms, instance.provider);
       instance.proxy = Kernel__factory.connect(addr, instance.provider);
     }
 
@@ -139,36 +127,27 @@ export class Kernel extends UserOperationBuilder {
         call.to,
         call.value,
         call.data,
-        Operation.Call,
+        call.operation,
       ])
     );
   }
 
-  executeBatch(calls: Array<ICall>) {
-    const data = this.multisend.interface.encodeFunctionData("multiSend", [
-      ethers.utils.hexConcat(
-        calls.map((c) =>
-          ethers.utils.solidityPack(
-            ["uint8", "address", "uint256", "uint256", "bytes"],
-            [
-              Operation.Call,
-              c.to,
-              c.value,
-              ethers.utils.hexDataLength(c.data),
-              c.data,
-            ]
-          )
-        )
-      ),
-    ]);
-
+  executeBatch(calls: ICall[]) {
     return this.setCallData(
-      this.proxy.interface.encodeFunctionData("execute", [
-        this.multisend.address,
-        ethers.constants.Zero,
-        data,
-        Operation.DelegateCall,
+      this.proxy.interface.encodeFunctionData("executeBatch", [
+        calls.map((call) => ({
+          to: call.to,
+          value: call.value,
+          data: call.data,
+          operation: call.operation,
+        })),
       ])
+    );
+  }
+
+  executeDelegateCall(to: string, data: string) {
+    return this.setCallData(
+      this.proxy.interface.encodeFunctionData("executeDelegateCall", [to, data])
     );
   }
 }

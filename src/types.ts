@@ -71,4 +71,5 @@ export interface ICall {
   to: string;
   value: BigNumberish;
   data: BytesLike;
+  operation: BigNumberish;
 }

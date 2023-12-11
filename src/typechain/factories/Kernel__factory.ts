@@ -19,6 +19,26 @@ const _abi = [
     type: "constructor",
   },
   {
+    inputs: [],
+    name: "AlreadyInitialized",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "DisabledMode",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotAuthorizedCaller",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NotEntryPoint",
+    type: "error",
+  },
+  {
     anonymous: false,
     inputs: [
       {
@@ -66,6 +86,25 @@ const _abi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+    ],
+    name: "Received",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: "address",
         name: "newImplementation",
@@ -89,7 +128,50 @@ const _abi = [
     ],
     name: "disableMode",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "eip712Domain",
+    outputs: [
+      {
+        internalType: "bytes1",
+        name: "fields",
+        type: "bytes1",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "version",
+        type: "string",
+      },
+      {
+        internalType: "uint256",
+        name: "chainId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "verifyingContract",
+        type: "address",
+      },
+      {
+        internalType: "bytes32",
+        name: "salt",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256[]",
+        name: "extensions",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -124,13 +206,60 @@ const _abi = [
       },
       {
         internalType: "enum Operation",
-        name: "operation",
+        name: "",
         type: "uint8",
       },
     ],
     name: "execute",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
+      },
+    ],
+    name: "executeDelegateCall",
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: "address",
+            name: "to",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
+          },
+        ],
+        internalType: "struct Call[]",
+        name: "calls",
+        type: "tuple[]",
+      },
+    ],
+    name: "executeBatch",
+    outputs: [],
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -139,7 +268,7 @@ const _abi = [
     outputs: [
       {
         internalType: "contract IKernelValidator",
-        name: "",
+        name: "validator",
         type: "address",
       },
     ],
@@ -152,7 +281,7 @@ const _abi = [
     outputs: [
       {
         internalType: "bytes4",
-        name: "",
+        name: "disabled",
         type: "bytes4",
       },
     ],
@@ -172,13 +301,13 @@ const _abi = [
       {
         components: [
           {
-            internalType: "uint48",
-            name: "validUntil",
+            internalType: "ValidAfter",
+            name: "validAfter",
             type: "uint48",
           },
           {
-            internalType: "uint48",
-            name: "validAfter",
+            internalType: "ValidUntil",
+            name: "validUntil",
             type: "uint48",
           },
           {
@@ -260,7 +389,7 @@ const _abi = [
     ],
     name: "initialize",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -427,7 +556,7 @@ const _abi = [
     ],
     name: "setDefaultValidator",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -448,12 +577,12 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "uint48",
+        internalType: "ValidUntil",
         name: "_validUntil",
         type: "uint48",
       },
       {
-        internalType: "uint48",
+        internalType: "ValidAfter",
         name: "_validAfter",
         type: "uint48",
       },
@@ -465,7 +594,7 @@ const _abi = [
     ],
     name: "setExecution",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -478,7 +607,7 @@ const _abi = [
     ],
     name: "upgradeTo",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -542,7 +671,7 @@ const _abi = [
           },
         ],
         internalType: "struct UserOperation",
-        name: "userOp",
+        name: "_userOp",
         type: "tuple",
       },
       {
@@ -559,12 +688,12 @@ const _abi = [
     name: "validateUserOp",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "ValidationData",
         name: "validationData",
         type: "uint256",
       },
     ],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {

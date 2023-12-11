@@ -45,7 +45,7 @@ const _abi = [
     ],
     name: "disable",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
     type: "function",
   },
   {
@@ -77,7 +77,31 @@ const _abi = [
     ],
     name: "enable",
     outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "payable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_caller",
+        type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
+      },
+    ],
+    name: "validCaller",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -96,7 +120,7 @@ const _abi = [
     name: "validateSignature",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "ValidationData",
         name: "",
         type: "uint256",
       },
@@ -182,12 +206,12 @@ const _abi = [
     name: "validateUserOp",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "ValidationData",
         name: "validationData",
         type: "uint256",
       },
     ],
-    stateMutability: "view",
+    stateMutability: "payable",
     type: "function",
   },
 ] as const;
