@@ -95,7 +95,6 @@ export class Kernel extends UserOperationBuilder {
       const addr = error?.errorArgs?.sender;
       if (!addr) throw error;
 
-      const chain = await instance.provider.getNetwork().then((n) => n.chainId);
       instance.proxy = Kernel__factory.connect(addr, instance.provider);
     }
 
