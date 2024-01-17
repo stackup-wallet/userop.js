@@ -21,11 +21,6 @@ export class RemoteEOA implements EOASigner {
       typeof signature === "string" &&
       /(^0[xX]|^)[0-9a-fA-F]{128}(00|01)$/.test(signature)
     ) {
-      // Ledger devices produces vrs signatures with a canonical v value of 0 or 1. When signing
-      // a message on a Ledger and then relaying the signature to MetaMask, the v byte is still
-      // going to be 0 or 1 when it is sent to the dapp, instead of the expected 27 or 28. The
-      // invalid last byte will cause validation of the signature to fail. This fixes the issue.
-
       // [details] https://github.com/ethereum/go-ethereum/issues/19751#issuecomment-504900739
 
       const sigV = (parseInt(signature.slice(-2), 16) + 27).toString(16);
