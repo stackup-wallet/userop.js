@@ -15,6 +15,7 @@ export class RemoteEOA implements EOASigner {
   async signMessage(message: string | Bytes): Promise<string> {
     const signer = this.provider.getSigner();
     let signature = await signer.signMessage(message);
+
     // Code snippet from https://gist.github.com/kalaspuff/19365e21e01929c79d5d2638c1ee580e
     if (
       typeof signature === "string" &&
