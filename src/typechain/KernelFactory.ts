@@ -9,6 +9,7 @@ import type {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -28,22 +29,62 @@ import type {
 
 export interface KernelFactoryInterface extends utils.Interface {
   functions: {
+    "addStake(uint32)": FunctionFragment;
+    "cancelOwnershipHandover()": FunctionFragment;
+    "completeOwnershipHandover(address)": FunctionFragment;
     "createAccount(address,bytes,uint256)": FunctionFragment;
     "entryPoint()": FunctionFragment;
-    "getAccountAddress(address,bytes,uint256)": FunctionFragment;
-    "kernelTemplate()": FunctionFragment;
-    "nextTemplate()": FunctionFragment;
+    "getAccountAddress(bytes,uint256)": FunctionFragment;
+    "initCodeHash()": FunctionFragment;
+    "isAllowedImplementation(address)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "ownershipHandoverExpiresAt(address)": FunctionFragment;
+    "ownershipHandoverValidFor()": FunctionFragment;
+    "predictDeterministicAddress(bytes32)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "requestOwnershipHandover()": FunctionFragment;
+    "setEntryPoint(address)": FunctionFragment;
+    "setImplementation(address,bool)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "unlockStake()": FunctionFragment;
+    "withdrawStake(address)": FunctionFragment;
   };
 
   getFunction(
     nameOrSignatureOrTopic:
+      | "addStake"
+      | "cancelOwnershipHandover"
+      | "completeOwnershipHandover"
       | "createAccount"
       | "entryPoint"
       | "getAccountAddress"
-      | "kernelTemplate"
-      | "nextTemplate"
+      | "initCodeHash"
+      | "isAllowedImplementation"
+      | "owner"
+      | "ownershipHandoverExpiresAt"
+      | "ownershipHandoverValidFor"
+      | "predictDeterministicAddress"
+      | "renounceOwnership"
+      | "requestOwnershipHandover"
+      | "setEntryPoint"
+      | "setImplementation"
+      | "transferOwnership"
+      | "unlockStake"
+      | "withdrawStake"
   ): FunctionFragment;
 
+  encodeFunctionData(
+    functionFragment: "addStake",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cancelOwnershipHandover",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "completeOwnershipHandover",
+    values: [string]
+  ): string;
   encodeFunctionData(
     functionFragment: "createAccount",
     values: [string, BytesLike, BigNumberish]
@@ -54,17 +95,67 @@ export interface KernelFactoryInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getAccountAddress",
-    values: [string, BytesLike, BigNumberish]
+    values: [BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "kernelTemplate",
+    functionFragment: "initCodeHash",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "nextTemplate",
+    functionFragment: "isAllowedImplementation",
+    values: [string]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "ownershipHandoverExpiresAt",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "ownershipHandoverValidFor",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "predictDeterministicAddress",
+    values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "requestOwnershipHandover",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setEntryPoint",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setImplementation",
+    values: [string, boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "unlockStake",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawStake",
+    values: [string]
   ): string;
 
+  decodeFunctionResult(functionFragment: "addStake", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "completeOwnershipHandover",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "createAccount",
     data: BytesLike
@@ -75,33 +166,109 @@ export interface KernelFactoryInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "kernelTemplate",
+    functionFragment: "initCodeHash",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "nextTemplate",
+    functionFragment: "isAllowedImplementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "ownershipHandoverExpiresAt",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "ownershipHandoverValidFor",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "predictDeterministicAddress",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "requestOwnershipHandover",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setEntryPoint",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setImplementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "unlockStake",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawStake",
     data: BytesLike
   ): Result;
 
   events: {
-    "AccountCreated(address,address,bytes,uint256)": EventFragment;
+    "Deployed(address,address)": EventFragment;
+    "OwnershipHandoverCanceled(address)": EventFragment;
+    "OwnershipHandoverRequested(address)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "AccountCreated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Deployed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverCanceled"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipHandoverRequested"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export interface AccountCreatedEventObject {
-  account: string;
-  validator: string;
-  data: string;
-  index: BigNumber;
+export interface DeployedEventObject {
+  proxy: string;
+  implementation: string;
 }
-export type AccountCreatedEvent = TypedEvent<
-  [string, string, string, BigNumber],
-  AccountCreatedEventObject
+export type DeployedEvent = TypedEvent<[string, string], DeployedEventObject>;
+
+export type DeployedEventFilter = TypedEventFilter<DeployedEvent>;
+
+export interface OwnershipHandoverCanceledEventObject {
+  pendingOwner: string;
+}
+export type OwnershipHandoverCanceledEvent = TypedEvent<
+  [string],
+  OwnershipHandoverCanceledEventObject
 >;
 
-export type AccountCreatedEventFilter = TypedEventFilter<AccountCreatedEvent>;
+export type OwnershipHandoverCanceledEventFilter =
+  TypedEventFilter<OwnershipHandoverCanceledEvent>;
+
+export interface OwnershipHandoverRequestedEventObject {
+  pendingOwner: string;
+}
+export type OwnershipHandoverRequestedEvent = TypedEvent<
+  [string],
+  OwnershipHandoverRequestedEventObject
+>;
+
+export type OwnershipHandoverRequestedEventFilter =
+  TypedEventFilter<OwnershipHandoverRequestedEvent>;
+
+export interface OwnershipTransferredEventObject {
+  oldOwner: string;
+  newOwner: string;
+}
+export type OwnershipTransferredEvent = TypedEvent<
+  [string, string],
+  OwnershipTransferredEventObject
+>;
+
+export type OwnershipTransferredEventFilter =
+  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface KernelFactory extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -130,50 +297,190 @@ export interface KernelFactory extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    addStake(
+      unstakeDelaySec: BigNumberish,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    cancelOwnershipHandover(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    completeOwnershipHandover(
+      pendingOwner: string,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
     createAccount(
-      _validator: string,
+      _implementation: string,
       _data: BytesLike,
       _index: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<[string]>;
 
     getAccountAddress(
-      _validator: string,
       _data: BytesLike,
       _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    kernelTemplate(overrides?: CallOverrides): Promise<[string]>;
+    initCodeHash(
+      overrides?: CallOverrides
+    ): Promise<[string] & { result: string }>;
 
-    nextTemplate(overrides?: CallOverrides): Promise<[string]>;
+    isAllowedImplementation(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
+
+    owner(overrides?: CallOverrides): Promise<[string] & { result: string }>;
+
+    ownershipHandoverExpiresAt(
+      pendingOwner: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { result: BigNumber }>;
+
+    ownershipHandoverValidFor(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    predictDeterministicAddress(
+      salt: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[string] & { predicted: string }>;
+
+    renounceOwnership(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    requestOwnershipHandover(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setEntryPoint(
+      _entryPoint: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    setImplementation(
+      _implementation: string,
+      _allow: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    unlockStake(
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
+
+    withdrawStake(
+      withdrawAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<ContractTransaction>;
   };
 
+  addStake(
+    unstakeDelaySec: BigNumberish,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  cancelOwnershipHandover(
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  completeOwnershipHandover(
+    pendingOwner: string,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
   createAccount(
-    _validator: string,
+    _implementation: string,
     _data: BytesLike,
     _index: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   entryPoint(overrides?: CallOverrides): Promise<string>;
 
   getAccountAddress(
-    _validator: string,
     _data: BytesLike,
     _index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<string>;
 
-  kernelTemplate(overrides?: CallOverrides): Promise<string>;
+  initCodeHash(overrides?: CallOverrides): Promise<string>;
 
-  nextTemplate(overrides?: CallOverrides): Promise<string>;
+  isAllowedImplementation(
+    arg0: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  ownershipHandoverExpiresAt(
+    pendingOwner: string,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  ownershipHandoverValidFor(overrides?: CallOverrides): Promise<BigNumber>;
+
+  predictDeterministicAddress(
+    salt: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<string>;
+
+  renounceOwnership(
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  requestOwnershipHandover(
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setEntryPoint(
+    _entryPoint: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  setImplementation(
+    _implementation: string,
+    _allow: boolean,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  transferOwnership(
+    newOwner: string,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  unlockStake(
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  withdrawStake(
+    withdrawAddress: string,
+    overrides?: Overrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
+    addStake(
+      unstakeDelaySec: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    cancelOwnershipHandover(overrides?: CallOverrides): Promise<void>;
+
+    completeOwnershipHandover(
+      pendingOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     createAccount(
-      _validator: string,
+      _implementation: string,
       _data: BytesLike,
       _index: BigNumberish,
       overrides?: CallOverrides
@@ -182,73 +489,261 @@ export interface KernelFactory extends BaseContract {
     entryPoint(overrides?: CallOverrides): Promise<string>;
 
     getAccountAddress(
-      _validator: string,
       _data: BytesLike,
       _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<string>;
 
-    kernelTemplate(overrides?: CallOverrides): Promise<string>;
+    initCodeHash(overrides?: CallOverrides): Promise<string>;
 
-    nextTemplate(overrides?: CallOverrides): Promise<string>;
+    isAllowedImplementation(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    ownershipHandoverExpiresAt(
+      pendingOwner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ownershipHandoverValidFor(overrides?: CallOverrides): Promise<BigNumber>;
+
+    predictDeterministicAddress(
+      salt: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    requestOwnershipHandover(overrides?: CallOverrides): Promise<void>;
+
+    setEntryPoint(
+      _entryPoint: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setImplementation(
+      _implementation: string,
+      _allow: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    unlockStake(overrides?: CallOverrides): Promise<void>;
+
+    withdrawStake(
+      withdrawAddress: string,
+      overrides?: CallOverrides
+    ): Promise<void>;
   };
 
   filters: {
-    "AccountCreated(address,address,bytes,uint256)"(
-      account?: string | null,
-      validator?: string | null,
-      data?: null,
-      index?: null
-    ): AccountCreatedEventFilter;
-    AccountCreated(
-      account?: string | null,
-      validator?: string | null,
-      data?: null,
-      index?: null
-    ): AccountCreatedEventFilter;
+    "Deployed(address,address)"(
+      proxy?: string | null,
+      implementation?: string | null
+    ): DeployedEventFilter;
+    Deployed(
+      proxy?: string | null,
+      implementation?: string | null
+    ): DeployedEventFilter;
+
+    "OwnershipHandoverCanceled(address)"(
+      pendingOwner?: string | null
+    ): OwnershipHandoverCanceledEventFilter;
+    OwnershipHandoverCanceled(
+      pendingOwner?: string | null
+    ): OwnershipHandoverCanceledEventFilter;
+
+    "OwnershipHandoverRequested(address)"(
+      pendingOwner?: string | null
+    ): OwnershipHandoverRequestedEventFilter;
+    OwnershipHandoverRequested(
+      pendingOwner?: string | null
+    ): OwnershipHandoverRequestedEventFilter;
+
+    "OwnershipTransferred(address,address)"(
+      oldOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
+    OwnershipTransferred(
+      oldOwner?: string | null,
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
   };
 
   estimateGas: {
+    addStake(
+      unstakeDelaySec: BigNumberish,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    cancelOwnershipHandover(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    completeOwnershipHandover(
+      pendingOwner: string,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
     createAccount(
-      _validator: string,
+      _implementation: string,
       _data: BytesLike,
       _index: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     entryPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
     getAccountAddress(
-      _validator: string,
       _data: BytesLike,
       _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    kernelTemplate(overrides?: CallOverrides): Promise<BigNumber>;
+    initCodeHash(overrides?: CallOverrides): Promise<BigNumber>;
 
-    nextTemplate(overrides?: CallOverrides): Promise<BigNumber>;
+    isAllowedImplementation(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    ownershipHandoverExpiresAt(
+      pendingOwner: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    ownershipHandoverValidFor(overrides?: CallOverrides): Promise<BigNumber>;
+
+    predictDeterministicAddress(
+      salt: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    renounceOwnership(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    requestOwnershipHandover(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setEntryPoint(
+      _entryPoint: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    setImplementation(
+      _implementation: string,
+      _allow: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    unlockStake(overrides?: Overrides & { from?: string }): Promise<BigNumber>;
+
+    withdrawStake(
+      withdrawAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
+    addStake(
+      unstakeDelaySec: BigNumberish,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    cancelOwnershipHandover(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    completeOwnershipHandover(
+      pendingOwner: string,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
     createAccount(
-      _validator: string,
+      _implementation: string,
       _data: BytesLike,
       _index: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getAccountAddress(
-      _validator: string,
       _data: BytesLike,
       _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    kernelTemplate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    initCodeHash(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    nextTemplate(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    isAllowedImplementation(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    ownershipHandoverExpiresAt(
+      pendingOwner: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    ownershipHandoverValidFor(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    predictDeterministicAddress(
+      salt: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    requestOwnershipHandover(
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setEntryPoint(
+      _entryPoint: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    setImplementation(
+      _implementation: string,
+      _allow: boolean,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    transferOwnership(
+      newOwner: string,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    unlockStake(
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawStake(
+      withdrawAddress: string,
+      overrides?: Overrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
   };
 }

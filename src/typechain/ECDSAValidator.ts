@@ -8,7 +8,7 @@ import type {
   BytesLike,
   CallOverrides,
   ContractTransaction,
-  Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -71,6 +71,7 @@ export interface ECDSAValidatorInterface extends utils.Interface {
     "disable(bytes)": FunctionFragment;
     "ecdsaValidatorStorage(address)": FunctionFragment;
     "enable(bytes)": FunctionFragment;
+    "validCaller(address,bytes)": FunctionFragment;
     "validateSignature(bytes32,bytes)": FunctionFragment;
     "validateUserOp((address,uint256,bytes,bytes,uint256,uint256,uint256,uint256,uint256,bytes,bytes),bytes32,uint256)": FunctionFragment;
   };
@@ -80,6 +81,7 @@ export interface ECDSAValidatorInterface extends utils.Interface {
       | "disable"
       | "ecdsaValidatorStorage"
       | "enable"
+      | "validCaller"
       | "validateSignature"
       | "validateUserOp"
   ): FunctionFragment;
@@ -90,6 +92,10 @@ export interface ECDSAValidatorInterface extends utils.Interface {
     values: [string]
   ): string;
   encodeFunctionData(functionFragment: "enable", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "validCaller",
+    values: [string, BytesLike]
+  ): string;
   encodeFunctionData(
     functionFragment: "validateSignature",
     values: [BytesLike, BytesLike]
@@ -105,6 +111,10 @@ export interface ECDSAValidatorInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "enable", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "validCaller",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "validateSignature",
     data: BytesLike
@@ -162,7 +172,7 @@ export interface ECDSAValidator extends BaseContract {
   functions: {
     disable(
       arg0: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     ecdsaValidatorStorage(
@@ -172,8 +182,14 @@ export interface ECDSAValidator extends BaseContract {
 
     enable(
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    validCaller(
+      _caller: string,
+      arg1: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     validateSignature(
       hash: BytesLike,
@@ -185,13 +201,13 @@ export interface ECDSAValidator extends BaseContract {
       _userOp: UserOperationStruct,
       _userOpHash: BytesLike,
       arg2: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { validationData: BigNumber }>;
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
   };
 
   disable(
     arg0: BytesLike,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   ecdsaValidatorStorage(
@@ -201,8 +217,14 @@ export interface ECDSAValidator extends BaseContract {
 
   enable(
     _data: BytesLike,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  validCaller(
+    _caller: string,
+    arg1: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   validateSignature(
     hash: BytesLike,
@@ -214,8 +236,8 @@ export interface ECDSAValidator extends BaseContract {
     _userOp: UserOperationStruct,
     _userOpHash: BytesLike,
     arg2: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
     disable(arg0: BytesLike, overrides?: CallOverrides): Promise<void>;
@@ -226,6 +248,12 @@ export interface ECDSAValidator extends BaseContract {
     ): Promise<string>;
 
     enable(_data: BytesLike, overrides?: CallOverrides): Promise<void>;
+
+    validCaller(
+      _caller: string,
+      arg1: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     validateSignature(
       hash: BytesLike,
@@ -257,7 +285,7 @@ export interface ECDSAValidator extends BaseContract {
   estimateGas: {
     disable(
       arg0: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     ecdsaValidatorStorage(
@@ -267,7 +295,13 @@ export interface ECDSAValidator extends BaseContract {
 
     enable(
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    validCaller(
+      _caller: string,
+      arg1: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     validateSignature(
@@ -280,14 +314,14 @@ export interface ECDSAValidator extends BaseContract {
       _userOp: UserOperationStruct,
       _userOpHash: BytesLike,
       arg2: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     disable(
       arg0: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     ecdsaValidatorStorage(
@@ -297,7 +331,13 @@ export interface ECDSAValidator extends BaseContract {
 
     enable(
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    validCaller(
+      _caller: string,
+      arg1: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     validateSignature(
@@ -310,7 +350,7 @@ export interface ECDSAValidator extends BaseContract {
       _userOp: UserOperationStruct,
       _userOpHash: BytesLike,
       arg2: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
   };
 }
