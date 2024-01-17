@@ -67,6 +67,8 @@ export interface IPresetBuilderOpts {
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface ISigner extends Pick<ethers.Signer, "signMessage"> {}
 
+export type EOASigner = ISigner & Pick<ethers.Signer, "getAddress">;
+
 export interface ICall {
   to: string;
   value: BigNumberish;

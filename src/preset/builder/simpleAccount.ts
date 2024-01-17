@@ -15,10 +15,14 @@ import {
   SimpleAccount as SimpleAccountImpl,
   SimpleAccount__factory,
 } from "../../typechain";
-import { IPresetBuilderOpts, UserOperationMiddlewareFn } from "../../types";
+import {
+  EOASigner,
+  IPresetBuilderOpts,
+  UserOperationMiddlewareFn,
+} from "../../types";
 
 export class SimpleAccount extends UserOperationBuilder {
-  private signer: ethers.Signer;
+  private signer: EOASigner;
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
   private factory: SimpleAccountFactory;
@@ -27,7 +31,7 @@ export class SimpleAccount extends UserOperationBuilder {
   proxy: SimpleAccountImpl;
 
   private constructor(
-    signer: ethers.Signer,
+    signer: EOASigner,
     rpcUrl: string,
     opts?: IPresetBuilderOpts
   ) {
@@ -62,7 +66,7 @@ export class SimpleAccount extends UserOperationBuilder {
   };
 
   public static async init(
-    signer: ethers.Signer,
+    signer: EOASigner,
     rpcUrl: string,
     opts?: IPresetBuilderOpts
   ): Promise<SimpleAccount> {
@@ -89,7 +93,7 @@ export class SimpleAccount extends UserOperationBuilder {
     const base = instance
       .useDefaults({
         sender: instance.proxy.address,
-        signature: await instance.signer.signMessage(
+        signature: await ethers.Wallet.createRandom().signMessage(
           ethers.utils.arrayify(ethers.utils.keccak256("0xdead"))
         ),
       })
