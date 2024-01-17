@@ -17,12 +17,8 @@ export class RemoteEOA implements EOASigner {
     let signature = await signer.signMessage(message);
 
     // Code snippet from https://gist.github.com/kalaspuff/19365e21e01929c79d5d2638c1ee580e
-    if (
-      typeof signature === "string" &&
-      /(^0[xX]|^)[0-9a-fA-F]{128}(00|01)$/.test(signature)
-    ) {
-      // [details] https://github.com/ethereum/go-ethereum/issues/19751#issuecomment-504900739
-
+    // See also https://github.com/ethereum/go-ethereum/issues/19751#issuecomment-504900739
+    if (/(^0[xX]|^)[0-9a-fA-F]{128}(00|01)$/.test(signature)) {
       const sigV = (parseInt(signature.slice(-2), 16) + 27).toString(16);
       signature = signature.slice(0, -2) + sigV;
     }
