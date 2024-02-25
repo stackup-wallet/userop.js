@@ -8,7 +8,7 @@ import type {
   BytesLike,
   CallOverrides,
   ContractTransaction,
-  Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -26,16 +26,24 @@ import type {
   OnEvent,
 } from "./common";
 
+export type CallStruct = { to: string; value: BigNumberish; data: BytesLike };
+
+export type CallStructOutput = [string, BigNumber, string] & {
+  to: string;
+  value: BigNumber;
+  data: string;
+};
+
 export type ExecutionDetailStruct = {
-  validUntil: BigNumberish;
   validAfter: BigNumberish;
+  validUntil: BigNumberish;
   executor: string;
   validator: string;
 };
 
 export type ExecutionDetailStructOutput = [number, number, string, string] & {
-  validUntil: number;
   validAfter: number;
+  validUntil: number;
   executor: string;
   validator: string;
 };
@@ -83,8 +91,10 @@ export type UserOperationStructOutput = [
 export interface KernelInterface extends utils.Interface {
   functions: {
     "disableMode(bytes4)": FunctionFragment;
+    "eip712Domain()": FunctionFragment;
     "entryPoint()": FunctionFragment;
     "execute(address,uint256,bytes,uint8)": FunctionFragment;
+    "executeBatch((address,uint256,bytes)[])": FunctionFragment;
     "getDefaultValidator()": FunctionFragment;
     "getDisabledMode()": FunctionFragment;
     "getExecution(bytes4)": FunctionFragment;
@@ -107,8 +117,10 @@ export interface KernelInterface extends utils.Interface {
   getFunction(
     nameOrSignatureOrTopic:
       | "disableMode"
+      | "eip712Domain"
       | "entryPoint"
       | "execute"
+      | "executeBatch"
       | "getDefaultValidator"
       | "getDisabledMode"
       | "getExecution"
@@ -133,12 +145,20 @@ export interface KernelInterface extends utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "eip712Domain",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "entryPoint",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "execute",
     values: [string, BigNumberish, BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "executeBatch",
+    values: [CallStruct[]]
   ): string;
   encodeFunctionData(
     functionFragment: "getDefaultValidator",
@@ -204,8 +224,16 @@ export interface KernelInterface extends utils.Interface {
     functionFragment: "disableMode",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "entryPoint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "execute", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "executeBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getDefaultValidator",
     data: BytesLike
@@ -263,11 +291,13 @@ export interface KernelInterface extends utils.Interface {
   events: {
     "DefaultValidatorChanged(address,address)": EventFragment;
     "ExecutionChanged(bytes4,address,address)": EventFragment;
+    "Received(address,uint256)": EventFragment;
     "Upgraded(address)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "DefaultValidatorChanged"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ExecutionChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Received"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
 
@@ -295,6 +325,17 @@ export type ExecutionChangedEvent = TypedEvent<
 
 export type ExecutionChangedEventFilter =
   TypedEventFilter<ExecutionChangedEvent>;
+
+export interface ReceivedEventObject {
+  sender: string;
+  amount: BigNumber;
+}
+export type ReceivedEvent = TypedEvent<
+  [string, BigNumber],
+  ReceivedEventObject
+>;
+
+export type ReceivedEventFilter = TypedEventFilter<ReceivedEvent>;
 
 export interface UpgradedEventObject {
   newImplementation: string;
@@ -332,8 +373,22 @@ export interface Kernel extends BaseContract {
   functions: {
     disableMode(
       _disableFlag: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
+
+    eip712Domain(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
 
     entryPoint(overrides?: CallOverrides): Promise<[string]>;
 
@@ -341,13 +396,22 @@ export interface Kernel extends BaseContract {
       to: string,
       value: BigNumberish,
       data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      arg3: BigNumberish,
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
-    getDefaultValidator(overrides?: CallOverrides): Promise<[string]>;
+    executeBatch(
+      calls: CallStruct[],
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<ContractTransaction>;
 
-    getDisabledMode(overrides?: CallOverrides): Promise<[string]>;
+    getDefaultValidator(
+      overrides?: CallOverrides
+    ): Promise<[string] & { validator: string }>;
+
+    getDisabledMode(
+      overrides?: CallOverrides
+    ): Promise<[string] & { disabled: string }>;
 
     getExecution(
       _selector: BytesLike,
@@ -366,7 +430,7 @@ export interface Kernel extends BaseContract {
     initialize(
       _defaultValidator: string,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     isValidSignature(
@@ -406,7 +470,7 @@ export interface Kernel extends BaseContract {
     setDefaultValidator(
       _defaultValidator: string,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     setExecution(
@@ -416,19 +480,19 @@ export interface Kernel extends BaseContract {
       _validUntil: BigNumberish,
       _validAfter: BigNumberish,
       _enableData: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     upgradeTo(
       _newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     validateUserOp(
-      userOp: UserOperationStruct,
+      _userOp: UserOperationStruct,
       userOpHash: BytesLike,
       missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<ContractTransaction>;
 
     version(overrides?: CallOverrides): Promise<[string]>;
@@ -436,8 +500,22 @@ export interface Kernel extends BaseContract {
 
   disableMode(
     _disableFlag: BytesLike,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
+
+  eip712Domain(
+    overrides?: CallOverrides
+  ): Promise<
+    [string, string, string, BigNumber, string, string, BigNumber[]] & {
+      fields: string;
+      name: string;
+      version: string;
+      chainId: BigNumber;
+      verifyingContract: string;
+      salt: string;
+      extensions: BigNumber[];
+    }
+  >;
 
   entryPoint(overrides?: CallOverrides): Promise<string>;
 
@@ -445,8 +523,13 @@ export interface Kernel extends BaseContract {
     to: string,
     value: BigNumberish,
     data: BytesLike,
-    operation: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    arg3: BigNumberish,
+    overrides?: PayableOverrides & { from?: string }
+  ): Promise<ContractTransaction>;
+
+  executeBatch(
+    calls: CallStruct[],
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   getDefaultValidator(overrides?: CallOverrides): Promise<string>;
@@ -470,7 +553,7 @@ export interface Kernel extends BaseContract {
   initialize(
     _defaultValidator: string,
     _data: BytesLike,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   isValidSignature(
@@ -510,7 +593,7 @@ export interface Kernel extends BaseContract {
   setDefaultValidator(
     _defaultValidator: string,
     _data: BytesLike,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   setExecution(
@@ -520,19 +603,19 @@ export interface Kernel extends BaseContract {
     _validUntil: BigNumberish,
     _validAfter: BigNumberish,
     _enableData: BytesLike,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   upgradeTo(
     _newImplementation: string,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   validateUserOp(
-    userOp: UserOperationStruct,
+    _userOp: UserOperationStruct,
     userOpHash: BytesLike,
     missingAccountFunds: BigNumberish,
-    overrides?: Overrides & { from?: string }
+    overrides?: PayableOverrides & { from?: string }
   ): Promise<ContractTransaction>;
 
   version(overrides?: CallOverrides): Promise<string>;
@@ -543,15 +626,31 @@ export interface Kernel extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    eip712Domain(
+      overrides?: CallOverrides
+    ): Promise<
+      [string, string, string, BigNumber, string, string, BigNumber[]] & {
+        fields: string;
+        name: string;
+        version: string;
+        chainId: BigNumber;
+        verifyingContract: string;
+        salt: string;
+        extensions: BigNumber[];
+      }
+    >;
+
     entryPoint(overrides?: CallOverrides): Promise<string>;
 
     execute(
       to: string,
       value: BigNumberish,
       data: BytesLike,
-      operation: BigNumberish,
+      arg3: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    executeBatch(calls: CallStruct[], overrides?: CallOverrides): Promise<void>;
 
     getDefaultValidator(overrides?: CallOverrides): Promise<string>;
 
@@ -633,7 +732,7 @@ export interface Kernel extends BaseContract {
     ): Promise<void>;
 
     validateUserOp(
-      userOp: UserOperationStruct,
+      _userOp: UserOperationStruct,
       userOpHash: BytesLike,
       missingAccountFunds: BigNumberish,
       overrides?: CallOverrides
@@ -663,6 +762,12 @@ export interface Kernel extends BaseContract {
       validator?: string | null
     ): ExecutionChangedEventFilter;
 
+    "Received(address,uint256)"(
+      sender?: null,
+      amount?: null
+    ): ReceivedEventFilter;
+    Received(sender?: null, amount?: null): ReceivedEventFilter;
+
     "Upgraded(address)"(newImplementation?: string | null): UpgradedEventFilter;
     Upgraded(newImplementation?: string | null): UpgradedEventFilter;
   };
@@ -670,8 +775,10 @@ export interface Kernel extends BaseContract {
   estimateGas: {
     disableMode(
       _disableFlag: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<BigNumber>;
 
     entryPoint(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -679,8 +786,13 @@ export interface Kernel extends BaseContract {
       to: string,
       value: BigNumberish,
       data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      arg3: BigNumberish,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<BigNumber>;
+
+    executeBatch(
+      calls: CallStruct[],
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     getDefaultValidator(overrides?: CallOverrides): Promise<BigNumber>;
@@ -704,7 +816,7 @@ export interface Kernel extends BaseContract {
     initialize(
       _defaultValidator: string,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     isValidSignature(
@@ -744,7 +856,7 @@ export interface Kernel extends BaseContract {
     setDefaultValidator(
       _defaultValidator: string,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     setExecution(
@@ -754,19 +866,19 @@ export interface Kernel extends BaseContract {
       _validUntil: BigNumberish,
       _validAfter: BigNumberish,
       _enableData: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     upgradeTo(
       _newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     validateUserOp(
-      userOp: UserOperationStruct,
+      _userOp: UserOperationStruct,
       userOpHash: BytesLike,
       missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<BigNumber>;
 
     version(overrides?: CallOverrides): Promise<BigNumber>;
@@ -775,8 +887,10 @@ export interface Kernel extends BaseContract {
   populateTransaction: {
     disableMode(
       _disableFlag: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
+
+    eip712Domain(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     entryPoint(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
@@ -784,8 +898,13 @@ export interface Kernel extends BaseContract {
       to: string,
       value: BigNumberish,
       data: BytesLike,
-      operation: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      arg3: BigNumberish,
+      overrides?: PayableOverrides & { from?: string }
+    ): Promise<PopulatedTransaction>;
+
+    executeBatch(
+      calls: CallStruct[],
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     getDefaultValidator(
@@ -813,7 +932,7 @@ export interface Kernel extends BaseContract {
     initialize(
       _defaultValidator: string,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     isValidSignature(
@@ -853,7 +972,7 @@ export interface Kernel extends BaseContract {
     setDefaultValidator(
       _defaultValidator: string,
       _data: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     setExecution(
@@ -863,19 +982,19 @@ export interface Kernel extends BaseContract {
       _validUntil: BigNumberish,
       _validAfter: BigNumberish,
       _enableData: BytesLike,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     upgradeTo(
       _newImplementation: string,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     validateUserOp(
-      userOp: UserOperationStruct,
+      _userOp: UserOperationStruct,
       userOpHash: BytesLike,
       missingAccountFunds: BigNumberish,
-      overrides?: Overrides & { from?: string }
+      overrides?: PayableOverrides & { from?: string }
     ): Promise<PopulatedTransaction>;
 
     version(overrides?: CallOverrides): Promise<PopulatedTransaction>;

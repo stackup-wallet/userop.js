@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BytesLike, ethers } from "ethers";
 import { ERC4337, Kernel as KernelConst } from "../../constants";
 import { UserOperationBuilder } from "../../builder";
 import { BundlerJsonRpcProvider } from "../../provider";
@@ -10,38 +10,40 @@ import {
 import {
   EntryPoint,
   EntryPoint__factory,
-  ECDSAKernelFactory,
-  ECDSAKernelFactory__factory,
+  KernelFactory__factory,
+  KernelFactory,
   Kernel as KernelImpl,
   Kernel__factory,
-  Multisend,
-  Multisend__factory,
 } from "../../typechain";
 import {
   IPresetBuilderOpts,
   ICall,
   UserOperationMiddlewareFn,
 } from "../../types";
-import { Safe } from "../../constants/safe";
 
 enum Operation {
   Call,
   DelegateCall,
 }
 
+export interface KernelOpts extends IPresetBuilderOpts {
+  implementation?: string;
+  validator?: string;
+  enableData?: BytesLike;
+}
+
 export class Kernel extends UserOperationBuilder {
   private signer: ethers.Signer;
   private provider: ethers.providers.JsonRpcProvider;
   private entryPoint: EntryPoint;
-  private factory: ECDSAKernelFactory;
+  private factory: KernelFactory;
   private initCode: string;
-  private multisend: Multisend;
   proxy: KernelImpl;
 
   private constructor(
     signer: ethers.Signer,
     rpcUrl: string,
-    opts?: IPresetBuilderOpts
+    opts?: KernelOpts
   ) {
     super();
     this.signer = signer;
@@ -52,15 +54,11 @@ export class Kernel extends UserOperationBuilder {
       opts?.entryPoint || ERC4337.EntryPoint,
       this.provider
     );
-    this.factory = ECDSAKernelFactory__factory.connect(
-      opts?.factory || KernelConst.ECDSAFactory,
+    this.factory = KernelFactory__factory.connect(
+      opts?.factory || KernelConst.versions["v2.3"].Factory,
       this.provider
     );
     this.initCode = "0x";
-    this.multisend = Multisend__factory.connect(
-      ethers.constants.AddressZero,
-      this.provider
-    );
     this.proxy = Kernel__factory.connect(
       ethers.constants.AddressZero,
       this.provider
@@ -82,7 +80,7 @@ export class Kernel extends UserOperationBuilder {
   public static async init(
     signer: ethers.Signer,
     rpcUrl: string,
-    opts?: IPresetBuilderOpts
+    opts?: KernelOpts
   ): Promise<Kernel> {
     const instance = new Kernel(signer, rpcUrl, opts);
 
@@ -90,7 +88,11 @@ export class Kernel extends UserOperationBuilder {
       instance.initCode = await ethers.utils.hexConcat([
         instance.factory.address,
         instance.factory.interface.encodeFunctionData("createAccount", [
-          await instance.signer.getAddress(),
+          opts?.implementation ?? KernelConst.versions["v2.3"].Implementation,
+          instance.proxy.interface.encodeFunctionData("initialize", [
+            opts?.validator ?? KernelConst.versions["v2.3"].ECDSAValidator,
+            opts?.enableData ?? (await instance.signer.getAddress()),
+          ]),
           ethers.BigNumber.from(opts?.salt ?? 0),
         ]),
       ]);
@@ -101,13 +103,6 @@ export class Kernel extends UserOperationBuilder {
       const addr = error?.errorArgs?.sender;
       if (!addr) throw error;
 
-      const chain = await instance.provider.getNetwork().then((n) => n.chainId);
-      const ms = Safe.MultiSend[chain.toString()];
-      if (!ms)
-        throw new Error(
-          `Multisend contract not deployed on network: ${chain.toString()}`
-        );
-      instance.multisend = Multisend__factory.connect(ms, instance.provider);
       instance.proxy = Kernel__factory.connect(addr, instance.provider);
     }
 
@@ -145,30 +140,8 @@ export class Kernel extends UserOperationBuilder {
   }
 
   executeBatch(calls: Array<ICall>) {
-    const data = this.multisend.interface.encodeFunctionData("multiSend", [
-      ethers.utils.hexConcat(
-        calls.map((c) =>
-          ethers.utils.solidityPack(
-            ["uint8", "address", "uint256", "uint256", "bytes"],
-            [
-              Operation.Call,
-              c.to,
-              c.value,
-              ethers.utils.hexDataLength(c.data),
-              c.data,
-            ]
-          )
-        )
-      ),
-    ]);
-
     return this.setCallData(
-      this.proxy.interface.encodeFunctionData("execute", [
-        this.multisend.address,
-        ethers.constants.Zero,
-        data,
-        Operation.DelegateCall,
-      ])
+      this.proxy.interface.encodeFunctionData("executeBatch", [calls])
     );
   }
 }
