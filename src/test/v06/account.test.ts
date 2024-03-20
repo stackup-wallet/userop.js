@@ -1,22 +1,20 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import * as Account from ".";
-import * as Protocol from "../protocol";
-
-import { maintainEthBalance } from "../../../test/helpers";
+import { V06 } from "../..";
+import { maintainEthBalance } from "../helpers";
 
 describe("Account", () => {
   const owner = privateKeyToAccount(generatePrivateKey());
-  const acc = new Account.Instance({
-    accountABI: Protocol.Constants.Abi.SimpleAccount,
-    factoryABI: Protocol.Constants.Abi.SimpleAccountFactory,
-    factoryAddress: Protocol.Constants.Entities.SimpleAccountFactory,
+  const acc = new V06.Account.Instance({
+    accountABI: V06.Protocol.Constants.Abi.SimpleAccount,
+    factoryABI: V06.Protocol.Constants.Abi.SimpleAccountFactory,
+    factoryAddress: V06.Protocol.Constants.Entities.SimpleAccountFactory,
     rpcUrl: "http://localhost:8545",
 
     setFactoryData(salt, encoder) {
       return encoder("createAccount", [owner.address, salt]);
     },
 
-    requestSignature: Account.Hooks.RequestSignature.withViemAccount(owner),
+    requestSignature: V06.Account.Hooks.RequestSignature.withViemAccount(owner),
   });
 
   beforeEach(async () => {
