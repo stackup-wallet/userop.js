@@ -1,9 +1,7 @@
 .github
 src
-tests
-.eslintignore
-.eslintrc.json
 .gitignore
-.prettierrc.json
+.prettierignore
+eslint.config.js
 jest.config.js
 tsconfig.json
