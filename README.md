@@ -12,9 +12,12 @@ See the `userop` documentation at [docs.stackup.sh](https://docs.stackup.sh/docs
 
 # Contributing
 
+Steps for setting up a local dev environment for contributing to userop.js.
+
 ## Prerequisites
 
 - Node 16 or later
+- [ERC-4337 Devnet](https://github.com/stackup-wallet/erc-4337-devnet) running
 
 ## Setup
 
