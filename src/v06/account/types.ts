@@ -1,11 +1,11 @@
 import { Abi } from "abitype";
 import { Hex, Address } from "viem";
 import * as Hooks from "./hooks";
-import * as Protocol from "../protocol";
 import * as Bundler from "../bundler";
+import * as EntryPoint from "../entryPoint";
 
 export interface BuildUserOperationResponse {
-  userOperation: Protocol.UserOperation;
+  userOperation: EntryPoint.UserOperation;
   userOpHash: Hex;
 }
 
@@ -16,8 +16,8 @@ export interface SendUserOperationResponse {
 
 export interface AccountOpts<A extends Abi, F extends Abi> {
   // Required global values
-  accountABI: A;
-  factoryABI: F;
+  accountAbi: A;
+  factoryAbi: F;
   factoryAddress: Address;
   rpcUrl: string;
 
@@ -35,3 +35,13 @@ export interface AccountOpts<A extends Abi, F extends Abi> {
   requestPaymaster?: Hooks.RequestPaymasterFunc;
   onBuild?: Hooks.OnBuildFunc;
 }
+
+export type RequiredAccountOpts<A extends Abi, F extends Abi> = Pick<
+  AccountOpts<A, F>,
+  | "accountAbi"
+  | "factoryAbi"
+  | "factoryAddress"
+  | "rpcUrl"
+  | "setFactoryData"
+  | "requestSignature"
+>;

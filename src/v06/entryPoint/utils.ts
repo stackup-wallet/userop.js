@@ -7,23 +7,7 @@ import {
 } from "viem";
 import { RawUserOperation, UserOperation } from "./types";
 
-export const toRawUserOperation = (userop: UserOperation): RawUserOperation => {
-  return {
-    sender: userop.sender,
-    nonce: numberToHex(userop.nonce),
-    initCode: userop.initCode,
-    callData: userop.callData,
-    callGasLimit: numberToHex(userop.callGasLimit),
-    verificationGasLimit: numberToHex(userop.verificationGasLimit),
-    preVerificationGas: numberToHex(userop.preVerificationGas),
-    maxFeePerGas: numberToHex(userop.maxFeePerGas),
-    maxPriorityFeePerGas: numberToHex(userop.maxPriorityFeePerGas),
-    paymasterAndData: userop.paymasterAndData,
-    signature: userop.signature,
-  };
-};
-
-export const getUserOpHash = (
+export const calculateUserOpHash = (
   userop: UserOperation,
   entryPoint: Address,
   chainId: number,
@@ -52,4 +36,20 @@ export const getUserOpHash = (
   );
 
   return keccak256(enc);
+};
+
+export const toRawUserOperation = (userop: UserOperation): RawUserOperation => {
+  return {
+    sender: userop.sender,
+    nonce: numberToHex(userop.nonce),
+    initCode: userop.initCode,
+    callData: userop.callData,
+    callGasLimit: numberToHex(userop.callGasLimit),
+    verificationGasLimit: numberToHex(userop.verificationGasLimit),
+    preVerificationGas: numberToHex(userop.preVerificationGas),
+    maxFeePerGas: numberToHex(userop.maxFeePerGas),
+    maxPriorityFeePerGas: numberToHex(userop.maxPriorityFeePerGas),
+    paymasterAndData: userop.paymasterAndData,
+    signature: userop.signature,
+  };
 };

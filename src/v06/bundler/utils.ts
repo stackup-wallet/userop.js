@@ -1,9 +1,9 @@
 import { Address, PublicClient, Hash } from "viem";
-import * as Protocol from "../protocol";
+import * as EntryPoint from "../entryPoint";
 
 export const SendUserOperationWithViem = async (
   client: PublicClient,
-  userOp: Protocol.UserOperation,
+  userOp: EntryPoint.UserOperation,
   entryPoint: Address,
 ): Promise<Hash> => {
   return client.transport.request({

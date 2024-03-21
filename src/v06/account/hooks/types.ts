@@ -5,7 +5,7 @@ import {
   AbiParametersToPrimitiveTypes,
 } from "abitype";
 import { Hex, Address, RpcStateOverride } from "viem";
-import * as Protocol from "../../protocol";
+import * as EntryPoint from "../../entryPoint";
 
 export type SetFactoryDataFunc<F extends Abi> = (
   salt: bigint,
@@ -21,26 +21,26 @@ export type RequestSignatureFunc = (
 ) => Promise<Hex>;
 
 export type RequestGasPriceFunc = () => Promise<
-  Pick<Protocol.UserOperation, "maxFeePerGas" | "maxPriorityFeePerGas">
+  Pick<EntryPoint.UserOperation, "maxFeePerGas" | "maxPriorityFeePerGas">
 >;
 
 export type RequestGasValuesFunc = (
-  userop: Protocol.UserOperation,
+  userop: EntryPoint.UserOperation,
   entryPoint: Address,
   stateOverrideSet?: RpcStateOverride,
 ) => Promise<
   Pick<
-    Protocol.UserOperation,
+    EntryPoint.UserOperation,
     "preVerificationGas" | "verificationGasLimit" | "callGasLimit"
   >
 >;
 
 export type RequestPaymasterFunc = (
-  userop: Protocol.UserOperation,
+  userop: EntryPoint.UserOperation,
   entryPoint: Address,
 ) => Promise<
-  Pick<Protocol.UserOperation, "paymasterAndData"> &
-    Partial<Protocol.UserOperation>
+  Pick<EntryPoint.UserOperation, "paymasterAndData"> &
+    Partial<EntryPoint.UserOperation>
 >;
 
-export type OnBuildFunc = (userop: Protocol.UserOperation) => void;
+export type OnBuildFunc = (userop: EntryPoint.UserOperation) => void;

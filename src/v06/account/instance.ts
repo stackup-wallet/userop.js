@@ -24,11 +24,11 @@ import {
 } from "./types";
 import * as Hooks from "./hooks";
 import * as Bundler from "../bundler";
-import * as Protocol from "../protocol";
+import * as EntryPoint from "../entryPoint";
 
 export class Instance<A extends Abi, F extends Abi> {
-  private readonly accountABI: A;
-  private readonly factoryABI: F;
+  private readonly accountAbi: A;
+  private readonly factoryAbi: F;
   private readonly ethClient: PublicClient;
   private readonly entryPointAddress: Address;
   private readonly factoryAddress: Address;
@@ -48,12 +48,12 @@ export class Instance<A extends Abi, F extends Abi> {
   public onBuild?: Hooks.OnBuildFunc;
 
   constructor(opts: AccountOpts<A, F>) {
-    this.accountABI = opts.accountABI;
-    this.factoryABI = opts.factoryABI;
+    this.accountAbi = opts.accountAbi;
+    this.factoryAbi = opts.factoryAbi;
     this.ethClient = createPublicClient({ transport: http(opts.rpcUrl) });
     this.salt = opts.salt ?? 0n;
     this.entryPointAddress =
-      opts.entryPointAddress ?? Protocol.Constants.Entities.EntryPoint;
+      opts.entryPointAddress ?? EntryPoint.DEFAULT_ADDRESS;
     this.factoryAddress = opts.factoryAddress;
     this.setFactoryData = opts.setFactoryData;
     this.requestSignature = opts.requestSignature;
@@ -73,7 +73,7 @@ export class Instance<A extends Abi, F extends Abi> {
         this.factoryAddress,
         this.setFactoryData(this.salt, (method, inputs) => {
           return encodeFunctionData({
-            abi: this.factoryABI as Abi,
+            abi: this.factoryAbi as Abi,
             functionName: method as string,
             args: inputs as unknown[],
           });
@@ -85,13 +85,13 @@ export class Instance<A extends Abi, F extends Abi> {
   }
 
   private async resolveSenderMeta(): Promise<
-    Pick<Protocol.UserOperation, "nonce" | "initCode">
+    Pick<EntryPoint.UserOperation, "nonce" | "initCode">
   > {
     const sender = await this.getSender();
     const [nonce, code] = await Promise.all([
       this.ethClient.readContract({
         address: this.entryPointAddress,
-        abi: Protocol.Constants.Abi.EntryPoint,
+        abi: EntryPoint.CONTRACT_ABI,
         functionName: "getNonce",
         args: [sender, this.nonceKey],
       }),
@@ -123,7 +123,7 @@ export class Instance<A extends Abi, F extends Abi> {
     // Casting is required since we extend the Abi type on the class definition.
     // It's ok here since typing has already been enforced on the public interface.
     this.callData = encodeFunctionData({
-      abi: this.accountABI as Abi,
+      abi: this.accountAbi as Abi,
       functionName: method as string,
       args: inputs as unknown[],
     });
@@ -138,7 +138,7 @@ export class Instance<A extends Abi, F extends Abi> {
     try {
       await this.ethClient.simulateContract({
         address: this.entryPointAddress,
-        abi: Protocol.Constants.Abi.EntryPoint,
+        abi: EntryPoint.CONTRACT_ABI,
         functionName: "getSenderAddress",
         args: [this.getInitCode()],
       });
@@ -170,8 +170,8 @@ export class Instance<A extends Abi, F extends Abi> {
         this.requestSignature("dummy", "0xdead"),
         this.ethClient.getChainId(),
       ]);
-    const init: Protocol.UserOperation = {
-      ...Protocol.DEFAULT_USEROP,
+    const init: EntryPoint.UserOperation = {
+      ...EntryPoint.DEFAULT_USEROP,
       sender,
       ...senderMeta,
       ...gasPrice,
@@ -184,18 +184,18 @@ export class Instance<A extends Abi, F extends Abi> {
       this.entryPointAddress,
       this.stateOverrideSet,
     );
-    const useropWithGas: Protocol.UserOperation = { ...init, ...est };
+    const useropWithGas: EntryPoint.UserOperation = { ...init, ...est };
 
     const pm =
       this.requestPaymaster != undefined
         ? await this.requestPaymaster(useropWithGas, this.entryPointAddress)
         : {};
-    const userOpWithPM: Protocol.UserOperation = {
+    const userOpWithPM: EntryPoint.UserOperation = {
       ...useropWithGas,
       ...pm,
     };
 
-    const userOpHash = Protocol.getUserOpHash(
+    const userOpHash = EntryPoint.calculateUserOpHash(
       userOpWithPM,
       this.entryPointAddress,
       chainId,

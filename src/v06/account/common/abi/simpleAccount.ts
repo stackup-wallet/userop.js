@@ -1,4 +1,4 @@
-export const SimpleAccount = [
+export const AccountAbi = [
   {
     inputs: [
       {
@@ -523,7 +523,7 @@ export const SimpleAccount = [
   },
 ] as const;
 
-export const SimpleAccountFactory = [
+export const FactoryAbi = [
   {
     inputs: [
       {

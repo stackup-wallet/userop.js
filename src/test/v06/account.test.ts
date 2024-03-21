@@ -5,16 +5,11 @@ import { maintainEthBalance } from "../helpers";
 describe("Account", () => {
   const owner = privateKeyToAccount(generatePrivateKey());
   const acc = new V06.Account.Instance({
-    accountABI: V06.Protocol.Constants.Abi.SimpleAccount,
-    factoryABI: V06.Protocol.Constants.Abi.SimpleAccountFactory,
-    factoryAddress: V06.Protocol.Constants.Entities.SimpleAccountFactory,
-    rpcUrl: "http://localhost:8545",
-
-    setFactoryData(salt, encoder) {
-      return encoder("createAccount", [owner.address, salt]);
-    },
-
-    requestSignature: V06.Account.Hooks.RequestSignature.withViemAccount(owner),
+    ...V06.Account.Common.SimpleAccount.baseConfig(
+      "http://localhost:8545",
+      owner.address,
+      V06.Account.Hooks.RequestSignature.withViemAccount(owner),
+    ),
   });
 
   beforeEach(async () => {
