@@ -24,8 +24,8 @@ jobs:
           path: ./erc-4337-devnet
 
       - name: Deploy ERC-4337 devnet
-        run: |
-          docker-compose -f "./erc-4337-devnet/docker-compose.yml" up -d --build
+        working-directory: ./erc-4337-devnet
+        run: docker-compose up -d --build
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
