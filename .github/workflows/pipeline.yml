@@ -17,6 +17,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Checkout erc-4337-devnet
+        uses: actions/checkout@v3
+        with:
+          repository: stackup-wallet/erc-4337-devnet
+          path: ./erc-4337-devnet
+
+      - name: Deploy ERC-4337 devnet
+        run: |
+          cd ./erc-4337-devnet && \
+          docker-compose up -d --build
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
