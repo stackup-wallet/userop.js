@@ -17,6 +17,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
       - name: Checkout erc-4337-devnet
         uses: actions/checkout@v3
         with:
@@ -27,13 +35,9 @@ jobs:
         working-directory: ./erc-4337-devnet
         run: docker-compose up -d --build
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Wait for ERC-4337 devnet to be ready
+        working-directory: ./erc-4337-devnet
+        run: make wait
 
       - name: Test
         run: yarn run test
