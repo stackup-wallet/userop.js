@@ -3,7 +3,7 @@ import { AccountAbi, FactoryAbi } from "./abi/simpleAccount";
 import { RequiredAccountOpts } from "../types";
 import { RequestSignatureFunc } from "../hooks";
 
-export const baseConfig = (
+export const base = (
   rpcUrl: string,
   owner: Address,
   requestSignature: RequestSignatureFunc,

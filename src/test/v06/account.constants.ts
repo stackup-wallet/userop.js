@@ -22,7 +22,7 @@ export const ACCOUNTS = [
   {
     type: "SimpleAccount, withViemWalletClient (account hoisted)",
     instance: new V06.Account.Instance({
-      ...V06.Account.Common.SimpleAccount.baseConfig(
+      ...V06.Account.CommonConfigs.SimpleAccount.base(
         "http://localhost:8545",
         VIEM_ACC.address,
         V06.Account.Hooks.RequestSignature.withViemWalletClient(
@@ -34,7 +34,7 @@ export const ACCOUNTS = [
   {
     type: "SimpleAccount, withViemWalletClient (account not hoisted)",
     instance: new V06.Account.Instance({
-      ...V06.Account.Common.SimpleAccount.baseConfig(
+      ...V06.Account.CommonConfigs.SimpleAccount.base(
         "http://localhost:8545",
         VIEM_ACC.address,
         V06.Account.Hooks.RequestSignature.withViemWalletClient(
@@ -47,7 +47,7 @@ export const ACCOUNTS = [
   {
     type: "SimpleAccount, withEthersSigner",
     instance: new V06.Account.Instance({
-      ...V06.Account.Common.SimpleAccount.baseConfig(
+      ...V06.Account.CommonConfigs.SimpleAccount.base(
         "http://localhost:8545",
         VIEM_ACC.address,
         V06.Account.Hooks.RequestSignature.withEthersSigner(ETHERS_WALLET),
