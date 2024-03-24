@@ -33,9 +33,11 @@ jobs:
 
       - name: Deploy ERC-4337 devnet
         working-directory: ./erc-4337-devnet
-        run: |
-          docker-compose up -d --build &&\
-          make wait
+        run: docker-compose up -d --build
+
+      - name: Wait for ERC-4337 devnet to be ready
+        working-directory: ./erc-4337-devnet
+        run: make wait
 
       - name: Test
         run: yarn run test
