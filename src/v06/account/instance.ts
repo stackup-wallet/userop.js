@@ -6,7 +6,6 @@ import {
 } from "abitype";
 import {
   Address,
-  pad,
   concat,
   encodeFunctionData,
   PublicClient,
@@ -16,6 +15,7 @@ import {
   ContractFunctionRevertedError,
   RpcStateOverride,
   Hex,
+  zeroAddress,
 } from "viem";
 import {
   AccountOpts,
@@ -29,32 +29,38 @@ import * as EntryPoint from "../entryPoint";
 export class Instance<A extends Abi, F extends Abi> {
   private readonly accountAbi: A;
   private readonly factoryAbi: F;
-  private readonly ethClient: PublicClient;
-  private readonly entryPointAddress: Address;
   private readonly factoryAddress: Address;
+  private readonly entryPointAddress: Address;
+  private readonly ethClient: PublicClient;
 
   private salt: bigint;
-  private sender: `0x${string}` = pad("0x", { size: 20 });
+  private waitTimeoutMs: number;
+  private waitIntervalMs: number;
+  private sender: `0x${string}` = zeroAddress;
   private initCode: Hex = "0x";
   private callData: Hex = "0x";
   private nonceKey = 0n;
   private stateOverrideSet?: RpcStateOverride;
 
-  public setFactoryData: Hooks.SetFactoryDataFunc<F>;
-  public requestSignature: Hooks.RequestSignatureFunc;
-  public requestGasPrice: Hooks.RequestGasPriceFunc;
-  public requestGasValues: Hooks.RequestGasValuesFunc;
-  public requestPaymaster?: Hooks.RequestPaymasterFunc;
-  public onBuild?: Hooks.OnBuildFunc;
+  private setFactoryData: Hooks.SetFactoryDataFunc<F>;
+  private requestSignature: Hooks.RequestSignatureFunc;
+  private requestGasPrice: Hooks.RequestGasPriceFunc;
+  private requestGasValues: Hooks.RequestGasValuesFunc;
+  private requestPaymaster?: Hooks.RequestPaymasterFunc;
+  private onBuild?: Hooks.OnBuildFunc;
 
   constructor(opts: AccountOpts<A, F>) {
     this.accountAbi = opts.accountAbi;
     this.factoryAbi = opts.factoryAbi;
-    this.ethClient = createPublicClient({ transport: http(opts.rpcUrl) });
-    this.salt = opts.salt ?? 0n;
+    this.factoryAddress = opts.factoryAddress;
     this.entryPointAddress =
       opts.entryPointAddress ?? EntryPoint.DEFAULT_ADDRESS;
-    this.factoryAddress = opts.factoryAddress;
+    this.ethClient = createPublicClient({ transport: http(opts.rpcUrl) });
+
+    this.salt = opts.salt ?? 0n;
+    this.waitTimeoutMs = opts.waitTimeoutMs ?? 60000;
+    this.waitIntervalMs = opts.waitIntervalMs ?? 3000;
+
     this.setFactoryData = opts.setFactoryData;
     this.requestSignature = opts.requestSignature;
     this.requestGasPrice =
@@ -89,12 +95,7 @@ export class Instance<A extends Abi, F extends Abi> {
   > {
     const sender = await this.getSender();
     const [nonce, code] = await Promise.all([
-      this.ethClient.readContract({
-        address: this.entryPointAddress,
-        abi: EntryPoint.CONTRACT_ABI,
-        functionName: "getNonce",
-        args: [sender, this.nonceKey],
-      }),
+      this.getNonce(),
       this.ethClient.getBytecode({ address: sender }),
     ]);
 
@@ -102,6 +103,53 @@ export class Instance<A extends Abi, F extends Abi> {
       nonce,
       initCode: code === undefined ? this.getInitCode() : "0x",
     };
+  }
+
+  getWaitTimeoutMs(): number {
+    return this.waitTimeoutMs;
+  }
+
+  setWaitTimeoutMs(time: number): Instance<A, F> {
+    this.waitTimeoutMs = time;
+    return this;
+  }
+
+  getWaitIntervalMs(): number {
+    return this.waitIntervalMs;
+  }
+
+  setWaitIntervalMs(time: number): Instance<A, F> {
+    this.waitIntervalMs = time;
+    return this;
+  }
+
+  getSalt(): bigint {
+    return this.salt;
+  }
+
+  setSalt(salt: bigint): Instance<A, F> {
+    this.salt = salt;
+    this.sender = zeroAddress;
+    this.initCode = "0x";
+    return this;
+  }
+
+  getNonceKey(): bigint {
+    return this.nonceKey;
+  }
+
+  setNonceKey(key: bigint): Instance<A, F> {
+    this.nonceKey = key;
+    return this;
+  }
+
+  async getNonce(): Promise<bigint> {
+    return this.ethClient.readContract({
+      address: this.entryPointAddress,
+      abi: EntryPoint.CONTRACT_ABI,
+      functionName: "getNonce",
+      args: [await this.getSender(), this.nonceKey],
+    });
   }
 
   setStateOverrideSetForEstimate(
@@ -116,22 +164,8 @@ export class Instance<A extends Abi, F extends Abi> {
     return this;
   }
 
-  encodeCallData<M extends ExtractAbiFunctionNames<A>>(
-    method: M,
-    inputs: AbiParametersToPrimitiveTypes<ExtractAbiFunction<A, M>["inputs"]>,
-  ): Instance<A, F> {
-    // Casting is required since we extend the Abi type on the class definition.
-    // It's ok here since typing has already been enforced on the public interface.
-    this.callData = encodeFunctionData({
-      abi: this.accountAbi as Abi,
-      functionName: method as string,
-      args: inputs as unknown[],
-    });
-    return this;
-  }
-
   async getSender(): Promise<Address> {
-    if (this.sender !== pad("0x", { size: 20 })) {
+    if (this.sender !== zeroAddress) {
       return this.sender;
     }
 
@@ -161,7 +195,24 @@ export class Instance<A extends Abi, F extends Abi> {
     return this.sender;
   }
 
+  encodeCallData<M extends ExtractAbiFunctionNames<A>>(
+    method: M,
+    inputs: AbiParametersToPrimitiveTypes<ExtractAbiFunction<A, M>["inputs"]>,
+  ): Instance<A, F> {
+    // Casting is required since we extend the Abi type on the class definition.
+    // It's ok here since typing has already been enforced on the public interface.
+    this.callData = encodeFunctionData({
+      abi: this.accountAbi as Abi,
+      functionName: method as string,
+      args: inputs as unknown[],
+    });
+    return this;
+  }
+
   async buildUserOperation(): Promise<BuildUserOperationResponse> {
+    const callData = this.callData;
+    this.callData = "0x";
+
     const [sender, senderMeta, gasPrice, signature, chainId] =
       await Promise.all([
         this.getSender(),
@@ -175,7 +226,7 @@ export class Instance<A extends Abi, F extends Abi> {
       sender,
       ...senderMeta,
       ...gasPrice,
-      callData: this.callData,
+      callData,
       signature,
     };
 
@@ -219,7 +270,23 @@ export class Instance<A extends Abi, F extends Abi> {
     return {
       userOpHash,
       wait: async () => {
-        return null;
+        let receipt = null;
+        const end = Date.now() + this.waitTimeoutMs;
+        while (Date.now() < end) {
+          receipt = await Bundler.GetUserOperationReceiptWithViem(
+            this.ethClient,
+            userOpHash,
+          );
+          if (receipt != null) {
+            return receipt;
+          }
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, this.waitIntervalMs),
+          );
+        }
+
+        return receipt;
       },
     };
   }

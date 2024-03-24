@@ -22,8 +22,10 @@ export interface AccountOpts<A extends Abi, F extends Abi> {
   rpcUrl: string;
 
   // Optional global values
-  salt?: bigint;
   entryPointAddress?: Address;
+  salt?: bigint;
+  waitTimeoutMs?: number;
+  waitIntervalMs?: number;
 
   // Required hook methods
   setFactoryData: Hooks.SetFactoryDataFunc<F>;

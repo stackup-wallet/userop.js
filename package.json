@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "abitype": "^1.0.0",
+    "ethers": "^6.11.1",
     "viem": "^2.7.19"
   }
 }
