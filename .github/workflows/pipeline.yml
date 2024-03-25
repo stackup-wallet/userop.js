@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  checks:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -25,14 +25,39 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Checkout erc-4337-devnet
+        uses: actions/checkout@v3
+        with:
+          repository: stackup-wallet/erc-4337-devnet
+          path: ./erc-4337-devnet
+
+      - name: Deploy ERC-4337 devnet
+        working-directory: ./erc-4337-devnet
+        run: docker-compose up -d --build
+
       - name: Test
-        run: yarn run test
+        run: make -C ./erc-4337-devnet wait && yarn run test
+
+  lint:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Lint
         run: yarn run lint
 
-      - name: Code format
+      - name: Format
         run: yarn run prettier
-
-      - name: build
-        run: yarn run build

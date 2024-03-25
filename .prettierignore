@@ -1,0 +1,4 @@
+.prettierignore
+.gitignore
+.npmignore
+yarn.lock
