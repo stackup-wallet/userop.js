@@ -36,7 +36,7 @@ jobs:
         run: docker-compose up -d --build
 
       - name: Test
-        run: make -C ./erc-4337-devnet wait && sleep 5 && yarn run test
+        run: make -C ./erc-4337-devnet wait && yarn run test
 
   lint:
     runs-on: ubuntu-latest
