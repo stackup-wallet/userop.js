@@ -35,12 +35,8 @@ jobs:
         working-directory: ./erc-4337-devnet
         run: docker-compose up -d --build
 
-      - name: Wait for ERC-4337 devnet to be ready
-        working-directory: ./erc-4337-devnet
-        run: make wait
-
       - name: Test
-        run: yarn run test
+        run: make -C ./erc-4337-devnet wait && yarn run test
 
   lint:
     runs-on: ubuntu-latest
